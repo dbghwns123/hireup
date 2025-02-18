@@ -1,7 +1,7 @@
 # 🚀 HireUp 취업준비생 커뮤니티 플랫폼
 
 ## 📌 프로젝트 소개
-**HireUp은 Hire + Level Up, 취업을 목표로 성장하길 원하는 취업 준비생들을 위한 정보 공유 및 소통 커뮤니티 플랫폼**입니다.  
+**HireUp은 Hire + Level Up으로 취업을 목표로 성장하길 원하는 취업 준비생들을 위한 정보 공유 및 소통 커뮤니티 플랫폼**입니다.  
 유저들은 게시글을 작성하고, 해시태그를 이용한 검색이 가능하며,  
 좋아요, 댓글 등의 소셜 기능을 활용할 수 있습니다.  
 
@@ -39,7 +39,7 @@
 ---
 
 ## 🏗️ ERD 구조  
-![ERD](https://github.com/user-attachments/assets/d334fb8f-7bb1-41d0-9cfa-ede5717d0d3f)
+![ERD](https://github.com/user-attachments/assets/9ebd7474-ad4c-4164-a0ec-ff446bd77b4d)
 
 ---
 
