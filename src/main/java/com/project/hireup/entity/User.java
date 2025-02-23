@@ -67,9 +67,6 @@ public class User {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Post> posts;
 
-  @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Report> reports;
-
   @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Follow> followers;
 
