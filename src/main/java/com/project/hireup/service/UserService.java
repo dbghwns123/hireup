@@ -1,8 +1,10 @@
 package com.project.hireup.service;
 
+import static com.project.hireup.type.ErrorCode.ALREADY_AUTH;
 import static com.project.hireup.type.ErrorCode.EMAIL_NOT_SEND;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CONFIRM_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_TOKEN;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL_AUTH_KEY;
 import static com.project.hireup.type.ErrorCode.USER_ALREADY_EXISTS;
 
 import com.project.hireup.component.MailComponent;
@@ -27,6 +29,7 @@ public class UserService {
   @Value("${admin.token}")
   private String adminToken;
 
+  // 회원가입
   public void signUp(SignUpRequestDto requestDto) {
 
     // 회원가입 진행 -> 이미 등록된 email이 있다면 예외 처리
@@ -68,7 +71,7 @@ public class UserService {
     String subject = "HireUp 사이트 가입을 환영합니다!";
     String text = "<p>" + requestDto.getName() + "님, HireUp 사이트 가입을 환영합니다!</p>"
         + "<p>아래 링크를 클릭하셔서 가입을 완료하세요.</p>"
-        + "<div><a target='_blank' href='http://localhost:8080/api/user/email-auth?id=" + uuid
+        + "<div><a target='_blank' href='http://localhost:8080/api/user/email-auth?uuid=" + uuid
         + "'>가입 완료</a></div>"
         + "<p>가입을 완료하시면 HireUp의 다양한 서비스를 이용하실 수 있습니다.</p>"
         + "<p>감사합니다.</p>";
@@ -79,5 +82,20 @@ public class UserService {
       throw new HireUpException(EMAIL_NOT_SEND);
     }
 
+  }
+
+  // 이메일 인증
+  public void emailAuth(String uuid) {
+
+    User user = userRepository.findByEmailAuthKey(uuid)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_EMAIL_AUTH_KEY));
+
+    if (user.isEmailAuthYn()) {
+      throw new HireUpException(ALREADY_AUTH);
+    }
+
+    user.setEmailAuthYn(true);
+    user.setStatus(UserStatus.ACTIVE);
+    userRepository.save(user);
   }
 }

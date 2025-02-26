@@ -13,7 +13,8 @@ public enum ErrorCode {
   NOT_EQUAL_CONFIRM_PASSWORD("비밀번호가 일치하지 않습니다."),
   NOT_EQUAL_TOKEN("토큰 값이 일치하지 않습니다."),
   EMAIL_NOT_SEND("이메일이 정상적으로 전송되지 않았습니다."),
-  ;
+  NOT_EXIST_EMAIL_AUTH_KEY("해당 이메일 인증 키는 존재하지 않습니다."),
+  ALREADY_AUTH("이미 이메일 인증을 완료했습니다.");
 
   private final String description;
 

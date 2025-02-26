@@ -49,7 +49,7 @@ public class User {
   private String emailAuthKey;
 
   @Column(nullable = false)
-  private Boolean emailAuthYn;
+  private boolean emailAuthYn;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
