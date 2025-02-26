@@ -1,5 +1,6 @@
 package com.project.hireup.entity;
 
+import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -53,6 +54,9 @@ public class User {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private UserStatus status = UserStatus.ACTIVE;
+
+  @Enumerated(EnumType.STRING)
+  private UserRole userRole;
 
   @Column(nullable = false)
   private Boolean isAdmin = false;
