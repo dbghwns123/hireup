@@ -45,21 +45,18 @@ public class User {
   @Column(length = 100, nullable = false)
   private String password;
 
-  @Column(length = 10, nullable = false)
-  private String emailVerificationCode;
+  @Column(length = 100, nullable = false)
+  private String emailAuthKey;
 
   @Column(nullable = false)
-  private Boolean isEmailVerified = false;
+  private Boolean emailAuthYn;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private UserStatus status = UserStatus.ACTIVE;
+  private UserStatus status;
 
   @Enumerated(EnumType.STRING)
   private UserRole userRole;
-
-  @Column(nullable = false)
-  private Boolean isAdmin = false;
 
   @CreatedDate
   @Column(updatable = false)
