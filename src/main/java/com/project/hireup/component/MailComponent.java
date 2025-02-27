@@ -1,5 +1,8 @@
 package com.project.hireup.component;
 
+import static com.project.hireup.type.ErrorCode.EMAIL_NOT_SEND;
+
+import com.project.hireup.exception.HireUpException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,9 +16,7 @@ public class MailComponent {
 
   private final JavaMailSender javaMailSender;
 
-  public boolean sendMail(String mail, String subject, String text) {
-
-    boolean result = false;
+  public void sendMail(String mail, String subject, String text) {
 
     MimeMessagePreparator msg = new MimeMessagePreparator() {
       @Override
@@ -32,12 +33,8 @@ public class MailComponent {
 
     try {
       javaMailSender.send(msg);
-      result = true;
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      throw new HireUpException(EMAIL_NOT_SEND, "메일 전송에 실패했습니다: " + e.getMessage());
     }
-    return result;
   }
-
-
 }

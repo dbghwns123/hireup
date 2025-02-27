@@ -1,8 +1,6 @@
 package com.project.hireup.service;
 
-import static com.project.hireup.type.ErrorCode.*;
 import static com.project.hireup.type.ErrorCode.ALREADY_AUTH;
-import static com.project.hireup.type.ErrorCode.EMAIL_NOT_SEND;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CONFIRM_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_TOKEN;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL_AUTH_KEY;
@@ -13,7 +11,6 @@ import com.project.hireup.dto.SignUpRequestDto;
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.UserRepository;
-import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import java.util.UUID;
@@ -70,12 +67,7 @@ public class UserService {
         + "<p>가입을 완료하시면 HireUp의 다양한 서비스를 이용하실 수 있습니다.</p>"
         + "<p>감사합니다.</p>";
 
-    boolean sendMail = mailComponent.sendMail(email, subject, text);
-
-    if (!sendMail) {
-      throw new HireUpException(EMAIL_NOT_SEND);
-    }
-
+    mailComponent.sendMail(email, subject, text);
   }
 
   // 이메일 인증

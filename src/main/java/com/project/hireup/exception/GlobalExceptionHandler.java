@@ -4,7 +4,6 @@ import static com.project.hireup.type.ErrorCode.INTERNAL_SERVER_ERROR;
 import static com.project.hireup.type.ErrorCode.INVALID_REQUEST;
 
 import com.project.hireup.dto.ErrorResponse;
-import com.project.hireup.type.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
