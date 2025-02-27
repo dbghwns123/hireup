@@ -1,5 +1,6 @@
 package com.project.hireup.service;
 
+import static com.project.hireup.type.ErrorCode.*;
 import static com.project.hireup.type.ErrorCode.ALREADY_AUTH;
 import static com.project.hireup.type.ErrorCode.EMAIL_NOT_SEND;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CONFIRM_PASSWORD;
@@ -12,6 +13,7 @@ import com.project.hireup.dto.SignUpRequestDto;
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.UserRepository;
+import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import java.util.UUID;
@@ -42,16 +44,8 @@ public class UserService {
       throw new HireUpException(NOT_EQUAL_CONFIRM_PASSWORD);
     }
 
-    System.out.println(requestDto.isAdmin());
-    // 기본으로는 일반 user
-    UserRole role = UserRole.ROLE_USER;
     // isAdmin 값이 true 이고 함께 넣어준 토큰 값이 일치한다면 Partner role 부여
-    if (requestDto.isAdmin()) {
-      if (!adminToken.equals(requestDto.getAdminToken())) {
-        throw new HireUpException(NOT_EQUAL_TOKEN);
-      }
-      role = UserRole.ROLE_ADMIN;
-    }
+    UserRole role = determineUserRole(requestDto);
 
     // email 인증 키를 UUID를 사용하여 랜덤 값으로 생성
     String uuid = UUID.randomUUID().toString();
@@ -97,5 +91,20 @@ public class UserService {
     user.setEmailAuthYn(true);
     user.setStatus(UserStatus.ACTIVE);
     userRepository.save(user);
+  }
+
+  // 유저에게 권한 부여하는 메서드 생성
+  private UserRole determineUserRole(SignUpRequestDto requestDto) {
+    if (requestDto.isAdmin()) {
+      validateAdminToken(requestDto.getAdminToken());
+      return UserRole.ROLE_ADMIN;
+    }
+    return UserRole.ROLE_USER;
+  }
+
+  private void validateAdminToken(String adminToken) {
+    if (!this.adminToken.equals(adminToken)) {
+      throw new HireUpException(NOT_EQUAL_TOKEN);
+    }
   }
 }

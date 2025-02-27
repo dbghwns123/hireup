@@ -4,9 +4,12 @@ import static com.project.hireup.type.ErrorCode.INTERNAL_SERVER_ERROR;
 import static com.project.hireup.type.ErrorCode.INVALID_REQUEST;
 
 import com.project.hireup.dto.ErrorResponse;
+import com.project.hireup.type.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(HireUpException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorResponse handleHireUpException(HireUpException e) {
     log.error("{} is occurred.", e.getErrorCode());
 
@@ -21,13 +25,18 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-    log.error("MethodArgumentNotValidException is occurred.", e);
+    log.error("Validation failed: {}", e.getMessage());
 
-    return new ErrorResponse(INVALID_REQUEST, INVALID_REQUEST.getDescription());
+    // 첫 번째 유효성 검증 에러 메시지를 가져옴 (모든 에러 메시지로 반환할지 결정도 가능)
+    String errorMessage = e.getBindingResult().getFieldError().getDefaultMessage();
+
+    return new ErrorResponse(INVALID_REQUEST, errorMessage);
   }
 
   @ExceptionHandler(Exception.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleException(Exception e) {
     log.error("Exception is occurred.", e);
 

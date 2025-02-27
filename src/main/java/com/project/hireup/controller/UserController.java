@@ -21,13 +21,7 @@ public class UserController {
   private final UserService userService;
 
   @PostMapping("/signup")
-  public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequestDto requestDto,
-      BindingResult bindingResult) {
-
-    if (bindingResult.hasErrors()) {
-      // 유효성 검사 실패 시 에러 메시지 반환
-      return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
-    }
+  public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequestDto requestDto) {
 
     userService.signUp(requestDto);
 
