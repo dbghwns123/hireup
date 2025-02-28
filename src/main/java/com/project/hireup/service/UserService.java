@@ -16,6 +16,7 @@ import com.project.hireup.type.UserStatus;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +25,7 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final MailComponent mailComponent;
+  private final PasswordEncoder passwordEncoder;
 
   @Value("${admin.token}")
   private String adminToken;
@@ -50,7 +52,7 @@ public class UserService {
     User user = User.builder()
         .email(requestDto.getEmail())
         .name(requestDto.getName())
-        .password(requestDto.getPassword()) // 추후 BCrypt.hashpw 를 사용하여 비밀번호 암호화 예정
+        .password(passwordEncoder.encode(requestDto.getPassword())) // 비밀번호 암호화 적용
         .emailAuthKey(uuid)
         .userRole(role)
         .emailAuthYn(false)
