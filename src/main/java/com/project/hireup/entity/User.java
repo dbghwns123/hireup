@@ -1,5 +1,6 @@
 package com.project.hireup.entity;
 
+import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -44,18 +45,18 @@ public class User {
   @Column(length = 100, nullable = false)
   private String password;
 
-  @Column(length = 10, nullable = false)
-  private String emailVerificationCode;
+  @Column(length = 100, nullable = false)
+  private String emailAuthKey;
 
   @Column(nullable = false)
-  private Boolean isEmailVerified = false;
+  private boolean emailAuthYn;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private UserStatus status = UserStatus.ACTIVE;
+  private UserStatus status;
 
-  @Column(nullable = false)
-  private Boolean isAdmin = false;
+  @Enumerated(EnumType.STRING)
+  private UserRole userRole;
 
   @CreatedDate
   @Column(updatable = false)
