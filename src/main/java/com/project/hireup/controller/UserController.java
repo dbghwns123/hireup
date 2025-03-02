@@ -1,5 +1,6 @@
 package com.project.hireup.controller;
 
+import com.project.hireup.dto.SignInRequestDto;
 import com.project.hireup.dto.SignUpRequestDto;
 import com.project.hireup.service.UserService;
 import jakarta.validation.Valid;
@@ -19,13 +20,20 @@ public class UserController {
 
   private final UserService userService;
 
-  @PostMapping("/signup")
+  @PostMapping("/sign-up")
   public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequestDto requestDto) {
 
     userService.signUp(requestDto);
 
     return ResponseEntity.ok("회원가입이 성공적으로 완료되었습니다.");
   }
+
+  @PostMapping("/sign-in")
+  public ResponseEntity<String> signIn(@Valid @RequestBody SignInRequestDto requestDto) {
+    String token = userService.signIn(requestDto.getEmail(), requestDto.getPassword());
+    return ResponseEntity.ok(token);
+  }
+
 
   @GetMapping("/email-auth")
   public ResponseEntity<String> emailAuth(@RequestParam String uuid) {

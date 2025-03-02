@@ -1,6 +1,8 @@
 package com.project.hireup.security;
 
 import com.project.hireup.entity.User;
+import com.project.hireup.type.UserRole;
+import com.project.hireup.type.UserStatus;
 import java.util.Collection;
 import java.util.List;
 import lombok.Getter;
@@ -12,24 +14,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class UserDetailsImpl implements UserDetails {
 
   private final User user;
+  private final Collection<? extends GrantedAuthority> authorities;
 
   public UserDetailsImpl(User user) {
     this.user = user;
-  }
-
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority(user.getUserRole().name()));
-  }
-
-  @Override
-  public String getPassword() {
-    return user.getPassword();
+    this.authorities = List.of(new SimpleGrantedAuthority(user.getUserRole().name()));
   }
 
   @Override
   public String getUsername() {
     return user.getEmail();
+  }
+
+  @Override
+  public String getPassword() {
+    return user.getPassword();
   }
 
   @Override
@@ -49,6 +48,6 @@ public class UserDetailsImpl implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return user.isEmailAuthYn(); // 이메일 인증 여부로 활성화 여부 결정
+    return user.getStatus() == UserStatus.ACTIVE; // 활성 상태 체크
   }
 }

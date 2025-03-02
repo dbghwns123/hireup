@@ -11,6 +11,7 @@ import com.project.hireup.dto.SignUpRequestDto;
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.UserRepository;
+import com.project.hireup.security.JwtTokenProvider;
 import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import java.util.UUID;
@@ -26,6 +27,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final MailComponent mailComponent;
   private final PasswordEncoder passwordEncoder;
+  private final JwtTokenProvider jwtTokenProvider;
 
   @Value("${admin.token}")
   private String adminToken;
@@ -70,6 +72,24 @@ public class UserService {
         + "<p>감사합니다.</p>";
 
     mailComponent.sendMail(email, subject, text);
+  }
+
+  // 로그인
+  public String signIn(String email, String password) {
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("이메일 또는 비밀번호가 올바르지 않습니다."));
+
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+      throw new RuntimeException("이메일 또는 비밀번호가 올바르지 않습니다.");
+    }
+    if (user.getStatus() == UserStatus.UNVERIFIED) { // 이메일 인증이 되지 않은 유저 로그인 방지
+      throw new RuntimeException("이메일 인증이 완료되지 않은 계정입니다.");
+    }
+    if (user.getStatus() == UserStatus.SUSPENDED) { // 정지된 유저 로그인 방지
+      throw new RuntimeException("현재 이용이 정지된 계정입니다.");
+    }
+
+    return jwtTokenProvider.createToken(user.getEmail(), user.getUserRole().name());
   }
 
   // 이메일 인증
