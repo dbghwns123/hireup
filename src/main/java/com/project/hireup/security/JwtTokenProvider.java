@@ -1,14 +1,17 @@
 package com.project.hireup.security;
 
 import com.project.hireup.entity.User;
+import com.project.hireup.exception.JwtException;
+import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -61,14 +64,20 @@ public class JwtTokenProvider {
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
       return true;
     } catch (ExpiredJwtException e) {
-      log.error("JWT 토큰이 만료되었습니다.");
-      throw new JwtException("JWT 토큰이 만료되었습니다.");
+      log.error("JWT 토큰이 만료되었습니다: {}", e.getMessage());
+      throw new JwtException(ErrorCode.EXPIRED_JWT);
     } catch (MalformedJwtException e) {
-      log.error("JWT 형식이 올바르지 않습니다.");
-      throw new JwtException("JWT 형식이 올바르지 않습니다.");
+      log.error("JWT 형식이 올바르지 않습니다: {}", e.getMessage());
+      throw new JwtException(ErrorCode.INVALID_JWT_FORMAT);
+    } catch (UnsupportedJwtException e) {
+      log.error("지원되지 않는 JWT 토큰입니다: {}", e.getMessage());
+      throw new JwtException(ErrorCode.UNSUPPORTED_JWT);
+    } catch (SignatureException e) {
+      log.error("JWT 서명이 유효하지 않습니다: {}", e.getMessage());
+      throw new JwtException(ErrorCode.INVALID_JWT_SIGNATURE);
     } catch (Exception e) {
-      log.error("JWT 검증 중 오류 발생");
-      throw new JwtException("JWT 검증 중 오류 발생");
+      log.error("JWT 검증 중 알 수 없는 오류 발생: {}", e.getMessage());
+      throw new JwtException(ErrorCode.JWT_VALIDATION_ERROR);
     }
   }
 
