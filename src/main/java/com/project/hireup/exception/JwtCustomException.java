@@ -12,12 +12,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class JwtException extends RuntimeException {
+public class JwtCustomException extends RuntimeException {
 
   private ErrorCode errorCode;
   private String errorMessage;
 
-  public JwtException(ErrorCode errorCode) {
+  public JwtCustomException(ErrorCode errorCode) {
     this.errorCode = errorCode;
     this.errorMessage = errorCode.getDescription();
   }

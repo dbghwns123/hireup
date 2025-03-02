@@ -13,8 +13,11 @@ public enum ErrorCode {
   NOT_EQUAL_CONFIRM_PASSWORD("비밀번호가 일치하지 않습니다."),
   NOT_EQUAL_TOKEN("토큰 값이 일치하지 않습니다."),
   EMAIL_NOT_SEND("이메일이 정상적으로 전송되지 않았습니다."),
+  NOT_EXIST_EMAIL("해당 계정은 존재하지 않습니다."),
   NOT_EXIST_EMAIL_AUTH_KEY("해당 이메일 인증 키는 존재하지 않습니다."),
   ALREADY_AUTH("이미 이메일 인증을 완료했습니다."),
+  EMAIL_UNVERIFIED("이메일 인증이 완료되지 않은 계정입니다."),
+  SUSPENDED_USER("현재 이용이 정지된 계정입니다."),
 
   // JWT 관련 에러 코드 추가
   EXPIRED_JWT("JWT 토큰이 만료되었습니다."),

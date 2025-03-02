@@ -1,7 +1,7 @@
 package com.project.hireup.security;
 
 import com.project.hireup.entity.User;
-import com.project.hireup.exception.JwtException;
+import com.project.hireup.exception.JwtCustomException;
 import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
 import io.jsonwebtoken.Claims;
@@ -15,7 +15,6 @@ import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,8 +39,7 @@ public class JwtTokenProvider {
 
   @PostConstruct
   public void init() {
-    byte[] bytes = Base64.getDecoder().decode(secretKey);
-    key = Keys.hmacShaKeyFor(bytes);
+    key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
   }
 
   // 토큰 생성
@@ -65,19 +63,19 @@ public class JwtTokenProvider {
       return true;
     } catch (ExpiredJwtException e) {
       log.error("JWT 토큰이 만료되었습니다: {}", e.getMessage());
-      throw new JwtException(ErrorCode.EXPIRED_JWT);
+      throw new JwtCustomException(ErrorCode.EXPIRED_JWT);
     } catch (MalformedJwtException e) {
       log.error("JWT 형식이 올바르지 않습니다: {}", e.getMessage());
-      throw new JwtException(ErrorCode.INVALID_JWT_FORMAT);
+      throw new JwtCustomException(ErrorCode.INVALID_JWT_FORMAT);
     } catch (UnsupportedJwtException e) {
       log.error("지원되지 않는 JWT 토큰입니다: {}", e.getMessage());
-      throw new JwtException(ErrorCode.UNSUPPORTED_JWT);
+      throw new JwtCustomException(ErrorCode.UNSUPPORTED_JWT);
     } catch (SignatureException e) {
       log.error("JWT 서명이 유효하지 않습니다: {}", e.getMessage());
-      throw new JwtException(ErrorCode.INVALID_JWT_SIGNATURE);
+      throw new JwtCustomException(ErrorCode.INVALID_JWT_SIGNATURE);
     } catch (Exception e) {
       log.error("JWT 검증 중 알 수 없는 오류 발생: {}", e.getMessage());
-      throw new JwtException(ErrorCode.JWT_VALIDATION_ERROR);
+      throw new JwtCustomException(ErrorCode.JWT_VALIDATION_ERROR);
     }
   }
 
