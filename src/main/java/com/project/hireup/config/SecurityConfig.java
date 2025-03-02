@@ -39,7 +39,8 @@ public class SecurityConfig {
         // 예외 처리 추가 예정
         .exceptionHandling(ex -> ex
             .authenticationEntryPoint((request, response, authException) -> {
-              response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");  // 인증 실패(401)
+              response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                  "Unauthorized");  // 인증 실패(401)
             })
             .accessDeniedHandler((request, response, accessDeniedException) -> {
               response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");  // 권한 부족(403)

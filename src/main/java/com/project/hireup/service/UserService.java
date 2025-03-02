@@ -1,10 +1,12 @@
 package com.project.hireup.service;
 
-import static com.project.hireup.type.ErrorCode.*;
 import static com.project.hireup.type.ErrorCode.ALREADY_AUTH;
+import static com.project.hireup.type.ErrorCode.EMAIL_UNVERIFIED;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CONFIRM_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_TOKEN;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL_AUTH_KEY;
+import static com.project.hireup.type.ErrorCode.SUSPENDED_USER;
 import static com.project.hireup.type.ErrorCode.USER_ALREADY_EXISTS;
 
 import com.project.hireup.component.MailComponent;
@@ -13,7 +15,6 @@ import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.UserRepository;
 import com.project.hireup.security.JwtTokenProvider;
-import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import java.util.UUID;

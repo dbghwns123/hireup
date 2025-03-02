@@ -1,7 +1,6 @@
 package com.project.hireup.security;
 
 import com.project.hireup.entity.User;
-import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import java.util.Collection;
 import java.util.List;
