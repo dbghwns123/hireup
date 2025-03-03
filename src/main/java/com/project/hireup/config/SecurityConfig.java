@@ -1,6 +1,6 @@
 package com.project.hireup.config;
 
-import com.project.hireup.security.JwtAuthenticationFilter;
+import com.project.hireup.jwt.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,8 +25,8 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        .csrf(csrf -> csrf.disable())
-        // 세션 비활성화
+        .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
+        // 세션 비활성화(세션을 사용하지 않고 JWT 인증 방식 사용)
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
@@ -35,8 +35,8 @@ public class SecurityConfig {
             .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
         )
         .addFilterBefore(jwtAuthenticationFilter,
-            UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
-        // 예외 처리 추가 예정
+            UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가(로그인한 사용자의 JWT를 검증하여 인증된 사용자로 설정)
+        // 예외 처리 추가(추후 더 자세하게 수정 예정)
         .exceptionHandling(ex -> ex
             .authenticationEntryPoint((request, response, authException) -> {
               response.sendError(HttpServletResponse.SC_UNAUTHORIZED,

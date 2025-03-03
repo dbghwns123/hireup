@@ -1,7 +1,8 @@
-package com.project.hireup.security;
+package com.project.hireup.jwt;
 
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.JwtCustomException;
+import com.project.hireup.security.UserDetailsImpl;
 import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
 import io.jsonwebtoken.Claims;
@@ -37,6 +38,7 @@ public class JwtTokenProvider {
 
   private final long tokenTime = 1000L * 60 * 60; // 1시간
 
+  // Bean 생성 후 자동 실행 (secretKey를 Key 객체로 변환하여 저장)
   @PostConstruct
   public void init() {
     key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
@@ -48,7 +50,7 @@ public class JwtTokenProvider {
     Date expiryDate = new Date(now.getTime() + tokenTime);
 
     return Jwts.builder()
-        .setSubject(email) // 사용자 이메일 (아이디)
+        .setSubject(email) // JWT payload의 subject(email)
         .claim("role", role) // 권한 정보
         .setIssuedAt(now) // 발급 시간
         .setExpiration(expiryDate) // 만료 시간
@@ -56,9 +58,10 @@ public class JwtTokenProvider {
         .compact();
   }
 
-  // JWT 검증
+  // JWT 토큰 유효성 검사
   public boolean validateToken(String token) {
     try {
+      // JWT 검증 수행(검증 실패 시 JwtException 발생)
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
       return true;
     } catch (ExpiredJwtException e) {
@@ -79,6 +82,7 @@ public class JwtTokenProvider {
     }
   }
 
+  // 사용자 인증 정보 생성
   public Authentication getAuthentication(String token) {
     Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
         .parseClaimsJws(token)

@@ -1,4 +1,4 @@
-package com.project.hireup.security;
+package com.project.hireup.jwt;
 
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -26,12 +26,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       FilterChain filterChain)
       throws ServletException, IOException {
 
+    // 토큰 추출
     String token = resolveToken(request);
 
     if (token != null) {
       try {
+        // 토큰 유효성 검사
         if (jwtTokenProvider.validateToken(token)) {
+          // 유효한 토큰이면 사용자 인증 정보 생성
           Authentication authentication = jwtTokenProvider.getAuthentication(token);
+          // 사용자 정보를 SecurityContext에 저장
           SecurityContextHolder.getContext().setAuthentication(authentication);
         }
       } catch (JwtException e) {
@@ -45,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
+  // HTTP 요청의 Authorization 헤더에서 토큰 추출
   private String resolveToken(HttpServletRequest request) {
     String bearerToken = request.getHeader("Authorization");
     if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

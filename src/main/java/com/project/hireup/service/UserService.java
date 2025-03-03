@@ -13,8 +13,8 @@ import com.project.hireup.component.MailComponent;
 import com.project.hireup.dto.SignUpRequestDto;
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
+import com.project.hireup.jwt.JwtTokenProvider;
 import com.project.hireup.repository.UserRepository;
-import com.project.hireup.security.JwtTokenProvider;
 import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import java.util.UUID;
@@ -79,12 +79,16 @@ public class UserService {
 
   // 로그인
   public String signIn(String email, String password) {
+    // 이메일로 사용자 조회
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new HireUpException(NOT_EXIST_EMAIL));
 
+    // 비밀번호 검증
     if (!passwordEncoder.matches(password, user.getPassword())) {
       throw new HireUpException(NOT_EQUAL_CONFIRM_PASSWORD);
     }
+
+    // 계정 상태 확인
     if (user.getStatus() == UserStatus.UNVERIFIED) { // 이메일 인증이 되지 않은 유저 로그인 방지
       throw new HireUpException(EMAIL_UNVERIFIED);
     }
@@ -92,6 +96,7 @@ public class UserService {
       throw new HireUpException(SUSPENDED_USER);
     }
 
+    // JWT 토큰 생성
     return jwtTokenProvider.createToken(user.getEmail(), user.getUserRole().name());
   }
 

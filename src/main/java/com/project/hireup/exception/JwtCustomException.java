@@ -21,6 +21,4 @@ public class JwtCustomException extends RuntimeException {
     this.errorCode = errorCode;
     this.errorMessage = errorCode.getDescription();
   }
-
-
 }
