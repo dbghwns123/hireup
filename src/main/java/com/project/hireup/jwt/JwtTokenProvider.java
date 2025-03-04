@@ -1,10 +1,10 @@
 package com.project.hireup.jwt;
 
-import com.project.hireup.entity.User;
 import com.project.hireup.exception.JwtCustomException;
 import com.project.hireup.security.UserDetailsImpl;
 import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
+import com.project.hireup.type.UserStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -45,13 +45,14 @@ public class JwtTokenProvider {
   }
 
   // 토큰 생성
-  public String createToken(String email, String role) {
+  public String createToken(String email, String role, String userStatus) {
     Date now = new Date();
     Date expiryDate = new Date(now.getTime() + tokenTime);
 
     return Jwts.builder()
         .setSubject(email) // JWT payload의 subject(email)
         .claim("role", role) // 권한 정보
+        .claim("status", userStatus) // UserStatus 추가
         .setIssuedAt(now) // 발급 시간
         .setExpiration(expiryDate) // 만료 시간
         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
@@ -90,18 +91,15 @@ public class JwtTokenProvider {
 
     String email = claims.getSubject(); // JWT에서 email 추출
     String roleString = claims.get("role", String.class); // JWT에서 role을 String으로 가져옴
+    String statusString = claims.get("status", String.class); // JWT에서 userStatus 가져오기
 
     // String -> UserRole 변환
     UserRole role = UserRole.valueOf(roleString);
+    UserStatus status = UserStatus.valueOf(statusString); // String -> Enum 변환
 
-    // User 객체 생성 (필요한 데이터만 포함)
-    User user = User.builder()
-        .email(email)
-        .userRole(role)
-        .build();
+    // UserDetailsImpl에 JWT 정보만 전달
+    UserDetails userDetails = new UserDetailsImpl(email, "", role, status);
 
-    // UserDetailsImpl에 User 객체 전달
-    UserDetails userDetails = new UserDetailsImpl(user);
     return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
   }
 }

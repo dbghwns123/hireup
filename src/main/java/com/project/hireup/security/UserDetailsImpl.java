@@ -1,6 +1,6 @@
 package com.project.hireup.security;
 
-import com.project.hireup.entity.User;
+import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import java.util.Collection;
 import java.util.List;
@@ -12,22 +12,28 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 public class UserDetailsImpl implements UserDetails {
 
-  private final User user;
+  private final String email;
+  private final String password;
+  private final UserRole userRole;
+  private final UserStatus userStatus;
   private final Collection<? extends GrantedAuthority> authorities;
 
-  public UserDetailsImpl(User user) {
-    this.user = user;
-    this.authorities = List.of(new SimpleGrantedAuthority(user.getUserRole().name()));
+  public UserDetailsImpl(String email, String password, UserRole userRole, UserStatus userStatus) {
+    this.email = email;
+    this.password = password;
+    this.userRole = userRole;
+    this.userStatus = userStatus;
+    this.authorities = List.of(new SimpleGrantedAuthority(userRole.name()));
   }
 
   @Override
   public String getUsername() {
-    return user.getEmail();
+    return email;
   }
 
   @Override
   public String getPassword() {
-    return user.getPassword();
+    return password;
   }
 
   @Override
@@ -37,7 +43,7 @@ public class UserDetailsImpl implements UserDetails {
 
   @Override
   public boolean isAccountNonLocked() {
-    return true;
+    return userStatus != UserStatus.SUSPENDED; // 정지된 계정이면 false 반환
   }
 
   @Override
@@ -47,6 +53,6 @@ public class UserDetailsImpl implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return user.getStatus() == UserStatus.ACTIVE; // 활성 상태 체크
+    return userStatus == UserStatus.ACTIVE; // 이메일 인증 완료된 계정만 활성화
   }
 }
