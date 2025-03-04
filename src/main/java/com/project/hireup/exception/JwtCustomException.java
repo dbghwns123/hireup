@@ -1,24 +1,26 @@
 package com.project.hireup.exception;
 
 import com.project.hireup.type.ErrorCode;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class JwtCustomException extends RuntimeException {
 
   private ErrorCode errorCode;
-  private String errorMessage;
 
   public JwtCustomException(ErrorCode errorCode) {
+    super(errorCode.getDescription()); // 부모 생성자에 메시지 전달
     this.errorCode = errorCode;
-    this.errorMessage = errorCode.getDescription();
+  }
+
+  public HttpStatus getHttpStatus() {
+    return errorCode.getStatus(); // ErrorCode에서 HttpStatus 가져오기
   }
 }

@@ -5,11 +5,13 @@ import static com.project.hireup.type.ErrorCode.EMAIL_NOT_SEND;
 import com.project.hireup.exception.HireUpException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MailComponent {
@@ -34,7 +36,8 @@ public class MailComponent {
     try {
       javaMailSender.send(msg);
     } catch (Exception e) {
-      throw new HireUpException(EMAIL_NOT_SEND, "메일 전송에 실패했습니다: " + e.getMessage());
+      log.error("메일 발송 실패: {}", e.getMessage(), e); // 로그 추가 (예외 메시지와 스택 트레이스 출력)
+      throw new HireUpException(EMAIL_NOT_SEND);
     }
   }
 }

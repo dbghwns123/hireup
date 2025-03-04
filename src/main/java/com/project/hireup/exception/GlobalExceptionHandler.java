@@ -6,6 +6,7 @@ import static com.project.hireup.type.ErrorCode.INVALID_REQUEST;
 import com.project.hireup.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,19 +17,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(HireUpException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
-  public ErrorResponse handleHireUpException(HireUpException e) {
+  public ResponseEntity<ErrorResponse> handleHireUpException(HireUpException e) {
     log.error("{} is occurred.", e.getErrorCode());
 
-    return new ErrorResponse(e.getErrorCode(), e.getErrorMessage());
+    return ResponseEntity
+        .status(e.getHttpStatus())
+        .body(new ErrorResponse(e.getErrorCode(), e.getMessage()));
   }
 
   @ExceptionHandler(JwtCustomException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED) // 401
-  public ErrorResponse handleJwtException(JwtCustomException e) {
+  public ResponseEntity<ErrorResponse> handleJwtException(JwtCustomException e) {
     log.error("JWT Exception: {}", e.getMessage());
 
-    return new ErrorResponse(e.getErrorCode(), e.getMessage());
+    return ResponseEntity
+        .status(e.getHttpStatus())
+        .body(new ErrorResponse(e.getErrorCode(), e.getMessage()));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

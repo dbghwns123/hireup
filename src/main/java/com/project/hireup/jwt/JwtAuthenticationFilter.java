@@ -1,6 +1,6 @@
 package com.project.hireup.jwt;
 
-import io.jsonwebtoken.JwtException;
+import com.project.hireup.exception.JwtCustomException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           // 사용자 정보를 SecurityContext에 저장
           SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-      } catch (JwtException e) {
+      } catch (JwtCustomException e) {
         SecurityContextHolder.clearContext(); // 잘못된 토큰일 경우 초기화
         log.error("JWT 인증 실패: {}", e.getMessage());
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
