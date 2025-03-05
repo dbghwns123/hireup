@@ -1,7 +1,6 @@
 package com.project.hireup.dto;
 
 import com.project.hireup.entity.User;
-import com.project.hireup.type.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

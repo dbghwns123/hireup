@@ -31,7 +31,8 @@ public class SecurityConfig {
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/auth/**").permitAll() // 인증 없이 접근 가능한 경로(모든 사용자 접근 허용)
-            .requestMatchers("/swagger-ui/**","/swagger-ui.html", "/v3/api-docs/**").permitAll() // Swagger 관련 경로 허용
+            .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
+            .permitAll() // Swagger 관련 경로 허용
             .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN") // Admin만 접근 가능
             .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
         )
