@@ -1,21 +1,27 @@
 package com.project.hireup.service;
 
 import static com.project.hireup.type.ErrorCode.ALREADY_AUTH;
+import static com.project.hireup.type.ErrorCode.EMAIL_UNVERIFIED;
+import static com.project.hireup.type.ErrorCode.INVALID_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CONFIRM_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_TOKEN;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL_AUTH_KEY;
+import static com.project.hireup.type.ErrorCode.SUSPENDED_USER;
 import static com.project.hireup.type.ErrorCode.USER_ALREADY_EXISTS;
 
 import com.project.hireup.component.MailComponent;
 import com.project.hireup.dto.SignUpRequestDto;
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
+import com.project.hireup.jwt.JwtTokenProvider;
 import com.project.hireup.repository.UserRepository;
 import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,9 +30,14 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final MailComponent mailComponent;
+  private final PasswordEncoder passwordEncoder;
+  private final JwtTokenProvider jwtTokenProvider;
 
   @Value("${admin.token}")
   private String adminToken;
+
+  @Value("${base.url}")
+  private String baseUrl;
 
   // 회원가입
   public void signUp(SignUpRequestDto requestDto) {
@@ -50,7 +61,7 @@ public class UserService {
     User user = User.builder()
         .email(requestDto.getEmail())
         .name(requestDto.getName())
-        .password(requestDto.getPassword()) // 추후 BCrypt.hashpw 를 사용하여 비밀번호 암호화 예정
+        .password(passwordEncoder.encode(requestDto.getPassword())) // 비밀번호 암호화 적용
         .emailAuthKey(uuid)
         .userRole(role)
         .emailAuthYn(false)
@@ -62,12 +73,36 @@ public class UserService {
     String subject = "HireUp 사이트 가입을 환영합니다!";
     String text = "<p>" + requestDto.getName() + "님, HireUp 사이트 가입을 환영합니다!</p>"
         + "<p>아래 링크를 클릭하셔서 가입을 완료하세요.</p>"
-        + "<div><a target='_blank' href='http://localhost:8080/api/user/email-auth?uuid=" + uuid
+        + "<div><a target='_blank' href='" + baseUrl + "/api/user/email-auth?uuid=" + uuid
         + "'>가입 완료</a></div>"
         + "<p>가입을 완료하시면 HireUp의 다양한 서비스를 이용하실 수 있습니다.</p>"
         + "<p>감사합니다.</p>";
 
     mailComponent.sendMail(email, subject, text);
+  }
+
+  // 로그인
+  public String signIn(String email, String password) {
+    // 이메일로 사용자 조회
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_EMAIL));
+
+    // 비밀번호 검증
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+      throw new HireUpException(INVALID_PASSWORD);
+    }
+
+    // 계정 상태 확인
+    if (user.getStatus() == UserStatus.UNVERIFIED) { // 이메일 인증이 되지 않은 유저 로그인 방지
+      throw new HireUpException(EMAIL_UNVERIFIED);
+    }
+    if (user.getStatus() == UserStatus.SUSPENDED) { // 정지된 유저 로그인 방지
+      throw new HireUpException(SUSPENDED_USER);
+    }
+
+    // JWT 토큰 생성
+    return jwtTokenProvider.createToken(user.getEmail(), user.getUserRole().name(),
+        user.getStatus().name());
   }
 
   // 이메일 인증

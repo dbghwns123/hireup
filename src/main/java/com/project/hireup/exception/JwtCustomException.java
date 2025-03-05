@@ -11,11 +11,11 @@ import org.springframework.http.HttpStatus;
 @Setter
 @NoArgsConstructor
 @Builder
-public class HireUpException extends RuntimeException {
+public class JwtCustomException extends RuntimeException {
 
   private ErrorCode errorCode;
 
-  public HireUpException(ErrorCode errorCode) {
+  public JwtCustomException(ErrorCode errorCode) {
     super(errorCode.getDescription()); // 부모 생성자에 메시지 전달
     this.errorCode = errorCode;
   }
@@ -23,5 +23,4 @@ public class HireUpException extends RuntimeException {
   public HttpStatus getHttpStatus() {
     return errorCode.getStatus(); // ErrorCode에서 HttpStatus 가져오기
   }
-
 }
