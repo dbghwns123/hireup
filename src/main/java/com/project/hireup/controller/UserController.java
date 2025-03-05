@@ -1,7 +1,9 @@
 package com.project.hireup.controller;
 
 import com.project.hireup.dto.UserResponseDto;
+import com.project.hireup.exception.HireUpException;
 import com.project.hireup.service.UserService;
+import com.project.hireup.type.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
@@ -28,6 +30,9 @@ public class UserController {
       @RequestParam @NotBlank(message = "이름은 필수 입력 항목입니다.") String name) {
 
     List<UserResponseDto> users = userService.searchByName(name);
+    if (users.isEmpty()) {
+      throw new HireUpException(ErrorCode.NOT_EXIST_NAME);
+    }
     return ResponseEntity.ok(users);
   }
 }

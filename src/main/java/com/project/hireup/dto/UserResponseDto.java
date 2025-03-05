@@ -18,14 +18,12 @@ public class UserResponseDto {
   private Long id; // 사용자 ID
   private String email; // 사용자 이메일
   private String name; // 사용자 이름
-  private UserStatus status; // 사용자 계정 상태
 
   public static UserResponseDto fromEntity(User user) {
     return UserResponseDto.builder()
         .id(user.getId())
         .email(user.getEmail())
         .name(user.getName())
-        .status(user.getStatus())
         .build();
   }
 

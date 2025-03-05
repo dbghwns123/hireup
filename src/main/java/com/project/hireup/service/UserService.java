@@ -6,6 +6,7 @@ import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.UserRepository;
 import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
+import com.project.hireup.type.UserStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +29,8 @@ public class UserService {
 
     return users.stream()
         // ROLE_USER 만 조회 가능
-        .filter(user -> user.getUserRole() == UserRole.ROLE_USER)
+        .filter(user -> user.getUserRole() == UserRole.ROLE_USER) // ROLE_USER만 필터링
+        .filter(user -> user.getStatus() == UserStatus.ACTIVE) // ACTIVE 상태만 필터링
         .map(UserResponseDto::fromEntity)
         .collect(Collectors.toList());
   }
