@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,5 +63,15 @@ public class UserController {
 
     userService.changePassword(requestDto, userDetails.getEmail());
     return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+  }
+
+  // 회원 탈퇴
+  @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 기능으로 회원 목록에서 삭제합니다.")
+  @DeleteMapping("/delete-account")
+  public ResponseEntity<String> deleteAccount(
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    userService.deleteAccount(userDetails.getEmail());
+    return ResponseEntity.ok("회원 탈퇴가 성공적으로 완료되었습니다.");
   }
 }

@@ -77,4 +77,14 @@ public class UserService {
     user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
     userRepository.save(user);
   }
+
+  // 회원 탈퇴
+  public void deleteAccount(String email) {
+
+    // 이미 로그인을 성공하고 조회하는 것이기 때문에 바로 get 으로 user 객체 가져오기
+    User user = userRepository.findByEmail(email).get();
+
+    // 사용자 삭제
+    userRepository.delete(user);
+  }
 }
