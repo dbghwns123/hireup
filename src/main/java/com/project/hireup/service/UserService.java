@@ -1,5 +1,6 @@
 package com.project.hireup.service;
 
+import com.project.hireup.dto.MyProfileResponseDto;
 import com.project.hireup.dto.UserResponseDto;
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
@@ -33,6 +34,15 @@ public class UserService {
         .filter(user -> user.getStatus() == UserStatus.ACTIVE) // ACTIVE 상태만 필터링
         .map(UserResponseDto::fromEntity)
         .collect(Collectors.toList());
+  }
+
+  public MyProfileResponseDto getMyProfile(String email) {
+
+    // 이미 로그인을 성공하고 조회하는 것이기 때문에 바로 get으로 user 객체 가져오기
+    User user = userRepository.findByEmail(email).get();
+
+    return MyProfileResponseDto.fromEntity(user);
+
   }
 
 }
