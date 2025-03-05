@@ -1,6 +1,7 @@
 package com.project.hireup.repository;
 
 import com.project.hireup.entity.User;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,4 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findByEmailAuthKey(String emailAuthKey);
 
   Optional<User> findByEmail(String email);
+
+  List<User> findAllByName(String name);
 }

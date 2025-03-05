@@ -21,6 +21,7 @@ public enum ErrorCode {
   NOT_EXIST_EMAIL(HttpStatus.BAD_REQUEST, "해당 계정은 존재하지 않습니다."),
   NOT_EXIST_EMAIL_AUTH_KEY(HttpStatus.BAD_REQUEST, "해당 이메일 인증 키는 존재하지 않습니다."),
   ALREADY_AUTH(HttpStatus.BAD_REQUEST, "이미 이메일 인증을 완료했습니다."),
+  NOT_EXIST_NAME(HttpStatus.BAD_REQUEST, "해당 이름을 가진 계정은 없습니다."),
 
   // 403 FORBIDDEN (접근 금지)
   EMAIL_UNVERIFIED(HttpStatus.FORBIDDEN, "이메일 인증이 완료되지 않은 계정입니다."),
