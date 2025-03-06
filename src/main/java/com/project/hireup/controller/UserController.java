@@ -2,6 +2,7 @@ package com.project.hireup.controller;
 
 import com.project.hireup.dto.MyProfileResponseDto;
 import com.project.hireup.dto.PasswordChangeRequestDto;
+import com.project.hireup.dto.PasswordRequestDto;
 import com.project.hireup.dto.UserResponseDto;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.security.UserDetailsImpl;
@@ -69,9 +70,10 @@ public class UserController {
   @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 기능으로 회원 목록에서 삭제합니다.")
   @DeleteMapping("/delete-account")
   public ResponseEntity<String> deleteAccount(
+      @RequestBody @Valid PasswordRequestDto requestDto,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-    userService.deleteAccount(userDetails.getEmail());
+    userService.deleteAccount(userDetails.getEmail(), requestDto.getPassword());
     return ResponseEntity.ok("회원 탈퇴가 성공적으로 완료되었습니다.");
   }
 }

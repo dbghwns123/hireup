@@ -83,10 +83,14 @@ public class UserService {
 
   // 회원 탈퇴
   @Transactional
-  public void deleteAccount(String email) {
+  public void deleteAccount(String email, String password) {
 
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_EMAIL));
+
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+      throw new HireUpException(NOT_EQUAL_CURRENT_PASSWORD);
+    }
 
     // 사용자 삭제
     userRepository.delete(user);
