@@ -51,7 +51,7 @@ public class UserController {
   public ResponseEntity<MyProfileResponseDto> getMyProfile(
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-    MyProfileResponseDto myProfile = userService.getMyProfile(userDetails.getEmail());
+    MyProfileResponseDto myProfile = userService.getMyProfile(userDetails.getId());
     return ResponseEntity.ok(myProfile);
   }
 
@@ -62,7 +62,7 @@ public class UserController {
       @RequestBody @Valid PasswordChangeRequestDto requestDto,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-    userService.changePassword(requestDto, userDetails.getEmail());
+    userService.changePassword(requestDto, userDetails.getId());
     return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
   }
 
@@ -73,7 +73,7 @@ public class UserController {
       @RequestBody @Valid PasswordRequestDto requestDto,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-    userService.deleteAccount(userDetails.getEmail(), requestDto.getPassword());
+    userService.deleteAccount(userDetails.getId(), requestDto.getPassword());
     return ResponseEntity.ok("회원 탈퇴가 성공적으로 완료되었습니다.");
   }
 }

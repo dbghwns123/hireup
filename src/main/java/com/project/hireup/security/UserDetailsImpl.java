@@ -12,13 +12,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 public class UserDetailsImpl implements UserDetails {
 
+  private final Long id; // 사용자 ID 추가
   private final String email;
   private final String password;
   private final UserRole userRole;
   private final UserStatus userStatus;
   private final Collection<? extends GrantedAuthority> authorities;
 
-  public UserDetailsImpl(String email, String password, UserRole userRole, UserStatus userStatus) {
+  public UserDetailsImpl(Long id, String email, String password, UserRole userRole,
+      UserStatus userStatus) {
+    this.id = id;
     this.email = email;
     this.password = password;
     this.userRole = userRole;

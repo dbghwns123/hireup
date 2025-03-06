@@ -19,6 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email));
 
-    return new UserDetailsImpl(user.getEmail(), user.getPassword(), user.getUserRole(), user.getStatus());
+    return new UserDetailsImpl(user.getId(), user.getEmail(), user.getPassword(),
+        user.getUserRole(), user.getStatus());
   }
 }

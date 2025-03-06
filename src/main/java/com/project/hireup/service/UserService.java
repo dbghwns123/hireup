@@ -46,20 +46,20 @@ public class UserService {
   }
 
   // 나의 프로필 조회
-  public MyProfileResponseDto getMyProfile(String email) {
+  public MyProfileResponseDto getMyProfile(Long id) {
 
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_EMAIL));
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_ACCOUNT));
 
     return MyProfileResponseDto.fromEntity(user);
   }
 
   // 비밀번호 변경
   @Transactional
-  public void changePassword(@Valid PasswordChangeRequestDto requestDto, String email) {
+  public void changePassword(@Valid PasswordChangeRequestDto requestDto, Long id) {
 
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_EMAIL));
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_ACCOUNT));
 
     // 기존 비밀번호 검증
     if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
@@ -83,10 +83,10 @@ public class UserService {
 
   // 회원 탈퇴
   @Transactional
-  public void deleteAccount(String email, String password) {
+  public void deleteAccount(Long id, String password) {
 
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_EMAIL));
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_ACCOUNT));
 
     if (!passwordEncoder.matches(password, user.getPassword())) {
       throw new HireUpException(NOT_EQUAL_CURRENT_PASSWORD);

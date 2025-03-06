@@ -20,7 +20,7 @@ public enum ErrorCode {
   DO_NOT_EQUAL_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "기존 비밀번호로는 변경할 수 없습니다."),
   INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 올바르지 않습니다."),
   NOT_EQUAL_TOKEN(HttpStatus.BAD_REQUEST, "토큰 값이 일치하지 않습니다."),
-  NOT_EXIST_EMAIL(HttpStatus.BAD_REQUEST, "해당 계정은 존재하지 않습니다."),
+  NOT_EXIST_ACCOUNT(HttpStatus.BAD_REQUEST, "해당 계정은 존재하지 않습니다."),
   NOT_EXIST_EMAIL_AUTH_KEY(HttpStatus.BAD_REQUEST, "해당 이메일 인증 키는 존재하지 않습니다."),
   ALREADY_AUTH(HttpStatus.BAD_REQUEST, "이미 이메일 인증을 완료했습니다."),
   NOT_EXIST_NAME(HttpStatus.BAD_REQUEST, "해당 이름을 가진 계정이 없습니다."),

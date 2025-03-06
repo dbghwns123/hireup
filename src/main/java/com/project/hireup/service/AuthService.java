@@ -5,7 +5,7 @@ import static com.project.hireup.type.ErrorCode.EMAIL_UNVERIFIED;
 import static com.project.hireup.type.ErrorCode.INVALID_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CONFIRM_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_TOKEN;
-import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL_AUTH_KEY;
 import static com.project.hireup.type.ErrorCode.SUSPENDED_USER;
 import static com.project.hireup.type.ErrorCode.USER_ALREADY_EXISTS;
@@ -87,7 +87,7 @@ public class AuthService {
   public String signIn(String email, String password) {
     // 이메일로 사용자 조회
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new HireUpException(NOT_EXIST_EMAIL));
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
     // 비밀번호 검증
     if (!passwordEncoder.matches(password, user.getPassword())) {
@@ -103,7 +103,7 @@ public class AuthService {
     }
 
     // JWT 토큰 생성
-    return jwtTokenProvider.createToken(user.getEmail(), user.getUserRole().name(),
+    return jwtTokenProvider.createToken(user.getId(), user.getEmail(), user.getUserRole().name(),
         user.getStatus().name());
   }
 
