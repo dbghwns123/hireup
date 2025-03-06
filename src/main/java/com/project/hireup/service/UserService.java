@@ -1,5 +1,6 @@
 package com.project.hireup.service;
 
+import static com.project.hireup.type.ErrorCode.*;
 import static com.project.hireup.type.ErrorCode.DO_NOT_EQUAL_CURRENT_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CONFIRM_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CURRENT_PASSWORD;
@@ -49,7 +50,7 @@ public class UserService {
   public MyProfileResponseDto getMyProfile(Long id) {
 
     User user = userRepository.findById(id)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_ACCOUNT));
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
     return MyProfileResponseDto.fromEntity(user);
   }
@@ -59,7 +60,7 @@ public class UserService {
   public void changePassword(@Valid PasswordChangeRequestDto requestDto, Long id) {
 
     User user = userRepository.findById(id)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_ACCOUNT));
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
     // 기존 비밀번호 검증
     if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
@@ -86,7 +87,7 @@ public class UserService {
   public void deleteAccount(Long id, String password) {
 
     User user = userRepository.findById(id)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_ACCOUNT));
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
     if (!passwordEncoder.matches(password, user.getPassword())) {
       throw new HireUpException(NOT_EQUAL_CURRENT_PASSWORD);
