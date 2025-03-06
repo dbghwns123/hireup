@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +55,7 @@ public class UserService {
   }
 
   // 비밀번호 변경
+  @Transactional
   public void changePassword(@Valid PasswordChangeRequestDto requestDto, String email) {
 
     User user = userRepository.findByEmail(email)
@@ -80,6 +82,7 @@ public class UserService {
   }
 
   // 회원 탈퇴
+  @Transactional
   public void deleteAccount(String email) {
 
     User user = userRepository.findByEmail(email)

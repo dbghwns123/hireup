@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,7 @@ public class AuthService {
   private String baseUrl;
 
   // 회원가입
+  @Transactional
   public void signUp(SignUpRequestDto requestDto) {
 
     // 회원가입 진행 -> 이미 등록된 email이 있다면 예외 처리
@@ -106,6 +108,7 @@ public class AuthService {
   }
 
   // 이메일 인증
+  @Transactional
   public void emailAuth(String uuid) {
 
     User user = userRepository.findByEmailAuthKey(uuid)
