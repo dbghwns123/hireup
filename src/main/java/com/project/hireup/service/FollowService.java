@@ -5,11 +5,14 @@ import static com.project.hireup.type.ErrorCode.DO_NOT_FOLLOWING_MYSELF;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_FOLLOW;
 
+import com.project.hireup.dto.UserResponseDto;
 import com.project.hireup.entity.Follow;
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.FollowRepository;
 import com.project.hireup.repository.UserRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +63,17 @@ public class FollowService {
         .orElseThrow(() -> new HireUpException(NOT_EXIST_FOLLOW));
 
     followRepository.delete(follow);
+  }
+
+  // 팔로잉 목록 조회 (내가 팔로우한 사람들)
+  public List<UserResponseDto> getFollowingList(Long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    return followRepository.findAllByFollower(user)
+        .stream()
+        .map(follow -> UserResponseDto.fromEntity(follow.getFollowing()))
+        .collect(Collectors.toList());
   }
 
 }
