@@ -3,6 +3,7 @@ package com.project.hireup.service;
 import static com.project.hireup.type.ErrorCode.ALREADY_FOLLOWING;
 import static com.project.hireup.type.ErrorCode.DO_NOT_FOLLOWING_MYSELF;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_FOLLOW;
 
 import com.project.hireup.entity.Follow;
 import com.project.hireup.entity.User;
@@ -44,6 +45,21 @@ public class FollowService {
         .follower(follower)
         .following(following)
         .build());
+  }
+
+  // 팔로우 취소
+  public void unfollowUser(Long followerId, Long followingId) {
+
+    User follower = userRepository.findById(followerId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    User following = userRepository.findById(followingId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    Follow follow = followRepository.findByFollowerAndFollowing(follower, following)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_FOLLOW));
+
+    followRepository.delete(follow);
   }
 
 }

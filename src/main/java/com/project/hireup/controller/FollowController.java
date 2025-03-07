@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,17 @@ public class FollowController {
     followService.followUser(userDetails.getId(), followingId);
 
     return ResponseEntity.ok("팔로우 성공");
+  }
+
+  // 팔로우 취소
+  @Operation(summary = "팔로우 취소", description = "특정 사용자를 언팔로우합니다.")
+  @DeleteMapping("/{followingId}")
+  public ResponseEntity<String> unfollowUser(@AuthenticationPrincipal UserDetailsImpl userDetails,
+      @PathVariable Long followingId) {
+
+    followService.unfollowUser(userDetails.getId(), followingId);
+
+    return ResponseEntity.ok("언팔로우 성공");
   }
 
 }
