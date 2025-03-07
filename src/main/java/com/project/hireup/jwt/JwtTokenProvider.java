@@ -36,7 +36,7 @@ public class JwtTokenProvider {
   // 암호화 알고리즘
   private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-  private final long tokenTime = 1000L * 60 * 60; // 1시간
+  private final long tokenTime = 1000L * 60 * 60 * 24; // 1시간
 
   // Bean 생성 후 자동 실행 (secretKey를 Key 객체로 변환하여 저장)
   @PostConstruct
@@ -45,12 +45,13 @@ public class JwtTokenProvider {
   }
 
   // 토큰 생성
-  public String createToken(String email, String role, String userStatus) {
+  public String createToken(Long id, String email, String role, String userStatus) {
     Date now = new Date();
     Date expiryDate = new Date(now.getTime() + tokenTime);
 
     return Jwts.builder()
         .setSubject(email) // JWT payload의 subject(email)
+        .claim("id", id) // 사용자 ID 추가
         .claim("role", role) // 권한 정보
         .claim("status", userStatus) // UserStatus 추가
         .setIssuedAt(now) // 발급 시간
@@ -89,6 +90,7 @@ public class JwtTokenProvider {
         .parseClaimsJws(token)
         .getBody();
 
+    Long id = claims.get("id", Long.class); // JWT에서 ID 추출
     String email = claims.getSubject(); // JWT에서 email 추출
     String roleString = claims.get("role", String.class); // JWT에서 role을 String으로 가져옴
     String statusString = claims.get("status", String.class); // JWT에서 userStatus 가져오기
@@ -98,7 +100,7 @@ public class JwtTokenProvider {
     UserStatus status = UserStatus.valueOf(statusString); // String -> Enum 변환
 
     // UserDetailsImpl에 JWT 정보만 전달
-    UserDetails userDetails = new UserDetailsImpl(email, "", role, status);
+    UserDetails userDetails = new UserDetailsImpl(id, email, "", role, status);
 
     return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
   }

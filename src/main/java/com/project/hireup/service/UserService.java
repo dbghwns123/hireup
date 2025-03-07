@@ -1,137 +1,99 @@
 package com.project.hireup.service;
 
-import static com.project.hireup.type.ErrorCode.ALREADY_AUTH;
-import static com.project.hireup.type.ErrorCode.EMAIL_UNVERIFIED;
-import static com.project.hireup.type.ErrorCode.INVALID_PASSWORD;
+import static com.project.hireup.type.ErrorCode.*;
+import static com.project.hireup.type.ErrorCode.DO_NOT_EQUAL_CURRENT_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CONFIRM_PASSWORD;
-import static com.project.hireup.type.ErrorCode.NOT_EQUAL_TOKEN;
-import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL;
-import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL_AUTH_KEY;
-import static com.project.hireup.type.ErrorCode.SUSPENDED_USER;
-import static com.project.hireup.type.ErrorCode.USER_ALREADY_EXISTS;
+import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CURRENT_PASSWORD;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_NAME;
+import static com.project.hireup.type.UserRole.ROLE_USER;
+import static com.project.hireup.type.UserStatus.ACTIVE;
 
-import com.project.hireup.component.MailComponent;
-import com.project.hireup.dto.SignUpRequestDto;
+import com.project.hireup.dto.MyProfileResponseDto;
+import com.project.hireup.dto.PasswordChangeRequestDto;
+import com.project.hireup.dto.UserResponseDto;
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
-import com.project.hireup.jwt.JwtTokenProvider;
 import com.project.hireup.repository.UserRepository;
-import com.project.hireup.type.UserRole;
-import com.project.hireup.type.UserStatus;
-import java.util.UUID;
+import com.project.hireup.type.ErrorCode;
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
   private final UserRepository userRepository;
-  private final MailComponent mailComponent;
   private final PasswordEncoder passwordEncoder;
-  private final JwtTokenProvider jwtTokenProvider;
 
-  @Value("${admin.token}")
-  private String adminToken;
+  // 이름으로 정보 조회
+  public List<UserResponseDto> searchByName(String name) {
+    List<User> users = userRepository.findAllByName(name);
 
-  @Value("${base.url}")
-  private String baseUrl;
-
-  // 회원가입
-  public void signUp(SignUpRequestDto requestDto) {
-
-    // 회원가입 진행 -> 이미 등록된 email이 있다면 예외 처리
-    if (userRepository.existsByEmail(requestDto.getEmail())) {
-      throw new HireUpException(USER_ALREADY_EXISTS);
+    // 해당 이름으로 생성된 계정이 없을시 예외
+    if (users.isEmpty()) {
+      throw new HireUpException(NOT_EXIST_NAME);
     }
 
-    // 비밀번호와 비밀번호 확인 입력이 다를시 예외 처리
-    if (!requestDto.getPassword().equals(requestDto.getConfirmPassword())) {
+    return users.stream()
+        .filter(user -> user.getUserRole() == ROLE_USER) // ROLE_USER만 필터링
+        .filter(user -> user.getStatus() == ACTIVE) // ACTIVE 상태만 필터링
+        .map(UserResponseDto::fromEntity)
+        .collect(Collectors.toList());
+  }
+
+  // 나의 프로필 조회
+  public MyProfileResponseDto getMyProfile(Long id) {
+
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    return MyProfileResponseDto.fromEntity(user);
+  }
+
+  // 비밀번호 변경
+  @Transactional
+  public void changePassword(@Valid PasswordChangeRequestDto requestDto, Long id) {
+
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    // 기존 비밀번호 검증
+    if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
+      throw new HireUpException(NOT_EQUAL_CURRENT_PASSWORD);
+    }
+
+    // 입력한 기존 비밀번호와 새로운 비밀번호가 같은지 검증
+    if (requestDto.getCurrentPassword().equals(requestDto.getNewPassword())) {
+      throw new HireUpException(DO_NOT_EQUAL_CURRENT_PASSWORD);
+    }
+
+    // 새로운 비밀번호와 비밀번호 확인 검증
+    if (!requestDto.getNewPassword().equals(requestDto.getConfirmPassword())) {
       throw new HireUpException(NOT_EQUAL_CONFIRM_PASSWORD);
     }
 
-    // isAdmin 값이 true 이고 함께 넣어준 토큰 값이 일치한다면 Partner role 부여
-    UserRole role = determineUserRole(requestDto);
-
-    // email 인증 키를 UUID를 사용하여 랜덤 값으로 생성
-    String uuid = UUID.randomUUID().toString();
-
-    User user = User.builder()
-        .email(requestDto.getEmail())
-        .name(requestDto.getName())
-        .password(passwordEncoder.encode(requestDto.getPassword())) // 비밀번호 암호화 적용
-        .emailAuthKey(uuid)
-        .userRole(role)
-        .emailAuthYn(false)
-        .status(UserStatus.UNVERIFIED)
-        .build();
+    // 새로운 비밀번호로 업데이트
+    user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
     userRepository.save(user);
-
-    String email = requestDto.getEmail();
-    String subject = "HireUp 사이트 가입을 환영합니다!";
-    String text = "<p>" + requestDto.getName() + "님, HireUp 사이트 가입을 환영합니다!</p>"
-        + "<p>아래 링크를 클릭하셔서 가입을 완료하세요.</p>"
-        + "<div><a target='_blank' href='" + baseUrl + "/api/user/email-auth?uuid=" + uuid
-        + "'>가입 완료</a></div>"
-        + "<p>가입을 완료하시면 HireUp의 다양한 서비스를 이용하실 수 있습니다.</p>"
-        + "<p>감사합니다.</p>";
-
-    mailComponent.sendMail(email, subject, text);
   }
 
-  // 로그인
-  public String signIn(String email, String password) {
-    // 이메일로 사용자 조회
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new HireUpException(NOT_EXIST_EMAIL));
+  // 회원 탈퇴
+  @Transactional
+  public void deleteAccount(Long id, String password) {
 
-    // 비밀번호 검증
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
     if (!passwordEncoder.matches(password, user.getPassword())) {
-      throw new HireUpException(INVALID_PASSWORD);
+      throw new HireUpException(NOT_EQUAL_CURRENT_PASSWORD);
     }
 
-    // 계정 상태 확인
-    if (user.getStatus() == UserStatus.UNVERIFIED) { // 이메일 인증이 되지 않은 유저 로그인 방지
-      throw new HireUpException(EMAIL_UNVERIFIED);
-    }
-    if (user.getStatus() == UserStatus.SUSPENDED) { // 정지된 유저 로그인 방지
-      throw new HireUpException(SUSPENDED_USER);
-    }
-
-    // JWT 토큰 생성
-    return jwtTokenProvider.createToken(user.getEmail(), user.getUserRole().name(),
-        user.getStatus().name());
-  }
-
-  // 이메일 인증
-  public void emailAuth(String uuid) {
-
-    User user = userRepository.findByEmailAuthKey(uuid)
-        .orElseThrow(() -> new HireUpException(NOT_EXIST_EMAIL_AUTH_KEY));
-
-    if (user.isEmailAuthYn()) {
-      throw new HireUpException(ALREADY_AUTH);
-    }
-
-    user.setEmailAuthYn(true);
-    user.setStatus(UserStatus.ACTIVE);
-    userRepository.save(user);
-  }
-
-  // 유저에게 권한 부여하는 메서드 생성
-  private UserRole determineUserRole(SignUpRequestDto requestDto) {
-    if (requestDto.isAdmin()) {
-      validateAdminToken(requestDto.getAdminToken());
-      return UserRole.ROLE_ADMIN;
-    }
-    return UserRole.ROLE_USER;
-  }
-
-  private void validateAdminToken(String adminToken) {
-    if (!this.adminToken.equals(adminToken)) {
-      throw new HireUpException(NOT_EQUAL_TOKEN);
-    }
+    // 사용자 삭제
+    userRepository.delete(user);
   }
 }
