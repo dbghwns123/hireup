@@ -76,4 +76,15 @@ public class FollowService {
         .collect(Collectors.toList());
   }
 
+  // 팔로워 목록 조회 (나를 팔로우한 사람들)
+  public List<UserResponseDto> getFollowerList(Long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    return followRepository.findAllByFollowing(user)
+        .stream()
+        .map(follow -> UserResponseDto.fromEntity(follow.getFollower()))
+        .collect(Collectors.toList());
+  }
+
 }
