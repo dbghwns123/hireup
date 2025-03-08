@@ -28,6 +28,11 @@ public class FollowService {
   @Transactional
   public void followUser(Long followerId, Long followingId) {
 
+    // 나의 계정을 팔로잉 시도할시
+    if (followerId.equals(followingId)) {
+      throw new HireUpException(DO_NOT_FOLLOWING_MYSELF);
+    }
+
     // 팔로워 계정
     User follower = userRepository.findById(followerId)
         .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
@@ -35,11 +40,6 @@ public class FollowService {
     // 팔로잉할 계정
     User following = userRepository.findById(followingId)
         .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
-
-    // 나의 계정을 팔로잉 시도할시
-    if (followerId.equals(followingId)) {
-      throw new HireUpException(DO_NOT_FOLLOWING_MYSELF);
-    }
 
     // 이미 팔로잉중인지 확인
     if (followRepository.existsByFollowerAndFollowing(follower, following)) {
