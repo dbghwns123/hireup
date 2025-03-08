@@ -4,8 +4,9 @@ import com.project.hireup.dto.UserResponseDto;
 import com.project.hireup.security.UserDetailsImpl;
 import com.project.hireup.service.FollowService;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,19 +48,19 @@ public class FollowController {
   // 팔로잉 목록 조회 (내가 팔로우한 사람들)
   @Operation(summary = "팔로잉 목록 조회", description = "내가 팔로우하고 있는 사용자 목록을 조회합니다.")
   @GetMapping("/following")
-  public ResponseEntity<List<UserResponseDto>> getFollowingList(
-      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+  public ResponseEntity<Page<UserResponseDto>> getFollowingList(
+      @AuthenticationPrincipal UserDetailsImpl userDetails, Pageable pageable) {
 
-    return ResponseEntity.ok(followService.getFollowingList(userDetails.getId()));
+    return ResponseEntity.ok(followService.getFollowingList(userDetails.getId(), pageable));
   }
 
   // 팔로워 목록 조회 (나를 팔로우한 사람들)
   @Operation(summary = "팔로워 목록 조회", description = "나를 팔로우하는 사용자 목록을 조회합니다.")
   @GetMapping("/followers")
-  public ResponseEntity<List<UserResponseDto>> getFollowerList(
-      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+  public ResponseEntity<Page<UserResponseDto>> getFollowerList(
+      @AuthenticationPrincipal UserDetailsImpl userDetails, Pageable pageable) {
 
-    return ResponseEntity.ok(followService.getFollowerList(userDetails.getId()));
+    return ResponseEntity.ok(followService.getFollowerList(userDetails.getId(), pageable));
   }
 
 }

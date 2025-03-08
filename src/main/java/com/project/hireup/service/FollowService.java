@@ -11,10 +11,11 @@ import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.FollowRepository;
 import com.project.hireup.repository.UserRepository;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class FollowService {
   private final FollowRepository followRepository;
 
   // 팔로우 추가
+  @Transactional
   public void followUser(Long followerId, Long followingId) {
 
     // 팔로워 계정
@@ -51,6 +53,7 @@ public class FollowService {
   }
 
   // 팔로우 취소
+  @Transactional
   public void unfollowUser(Long followerId, Long followingId) {
 
     User follower = userRepository.findById(followerId)
@@ -66,25 +69,23 @@ public class FollowService {
   }
 
   // 팔로잉 목록 조회 (내가 팔로우한 사람들)
-  public List<UserResponseDto> getFollowingList(Long userId) {
+  public Page<UserResponseDto> getFollowingList(Long userId, Pageable pageable) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
-    return followRepository.findAllByFollower(user)
-        .stream()
-        .map(follow -> UserResponseDto.fromEntity(follow.getFollowing()))
-        .collect(Collectors.toList());
+    return followRepository.findAllByFollower(user, pageable)
+        .map(follow -> UserResponseDto.fromEntity(follow.getFollowing()));
+
   }
 
   // 팔로워 목록 조회 (나를 팔로우한 사람들)
-  public List<UserResponseDto> getFollowerList(Long userId) {
+  public Page<UserResponseDto> getFollowerList(Long userId, Pageable pageable) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
-    return followRepository.findAllByFollowing(user)
-        .stream()
-        .map(follow -> UserResponseDto.fromEntity(follow.getFollower()))
-        .collect(Collectors.toList());
+    return followRepository.findAllByFollowing(user, pageable)
+        .map(follow -> UserResponseDto.fromEntity(follow.getFollower()));
+
   }
 
 }
