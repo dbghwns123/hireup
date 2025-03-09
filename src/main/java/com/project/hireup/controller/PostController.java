@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,5 +59,16 @@ public class PostController {
 
     return ResponseEntity.ok(postService.getAllPosts(userDetails.getId(), pageable));
 
+  }
+
+  // 게시글 수정
+  @PutMapping("/{postId}")
+  public ResponseEntity<String> updatePost(@PathVariable Long postId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails,
+      @RequestBody @Valid PostRequestDto requestDto) {
+
+    postService.updatePost(postId, userDetails.getId(), requestDto);
+
+    return ResponseEntity.ok("게시글이 수정이 성공적으로 완료되었습니다.");
   }
 }

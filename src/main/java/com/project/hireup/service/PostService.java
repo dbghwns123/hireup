@@ -1,8 +1,10 @@
 package com.project.hireup.service;
 
 import static com.project.hireup.type.ErrorCode.CAN_NOT_READ_POST;
+import static com.project.hireup.type.ErrorCode.CAN_NOT_UPDATE_POST;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_CATEGORY;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_POST;
 import static com.project.hireup.type.ErrorCode.NOT_FOUND_POST;
 
 import com.project.hireup.dto.PostRequestDto;
@@ -16,6 +18,7 @@ import com.project.hireup.repository.PostRepository;
 import com.project.hireup.repository.UserRepository;
 import com.project.hireup.type.PostStatus;
 import jakarta.validation.Valid;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -102,6 +105,29 @@ public class PostService {
 
     // 게시글 조회 (필터링 적용된 JPQL 사용)
     return postRepository.findAllVisiblePosts(user, pageable);
+  }
+
+  // 게시글 수정
+  public void updatePost(Long postId, Long userId, @Valid PostRequestDto requestDto) {
+
+    // 게시글 확인
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_POST));
+
+    // 내가 작성한 게시글이 아닐시
+    if (!Objects.equals(post.getUser().getId(), userId)) {
+      throw new HireUpException(CAN_NOT_UPDATE_POST);
+    }
+
+    // 카테고리가 유효한지 확인
+    Category category = categoryRepository.findById(requestDto.getCategoryId())
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
+
+    // 게시글 수정 (엔티티의 메서드 호출)
+    post.updatePost(requestDto, category);
+
+    // 변경 사항 저장
+    postRepository.save(post);
   }
 
 }
