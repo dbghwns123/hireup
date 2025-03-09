@@ -1,12 +1,15 @@
 package com.project.hireup.controller;
 
 import com.project.hireup.dto.PostRequestDto;
+import com.project.hireup.entity.Post;
 import com.project.hireup.security.UserDetailsImpl;
 import com.project.hireup.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,5 +30,13 @@ public class PostController {
     postService.createPost(requestDto, userDetails.getId());
 
     return ResponseEntity.ok("게시글이 성공적으로 생성되었습니다.");
+  }
+
+  // 특정 게시글 조회
+  @GetMapping("/{postId}")
+  public ResponseEntity<Post> getPostById(@PathVariable Long postId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    return ResponseEntity.ok(postService.getPostById(postId, userDetails.getId()));
   }
 }
