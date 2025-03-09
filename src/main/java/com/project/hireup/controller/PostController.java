@@ -6,6 +6,8 @@ import com.project.hireup.security.UserDetailsImpl;
 import com.project.hireup.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,5 +40,14 @@ public class PostController {
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
     return ResponseEntity.ok(postService.getPostById(postId, userDetails.getId()));
+  }
+
+  // 특정 카테고리의 게시글 목록 조회(페이징 처리)
+  @GetMapping("/category/{categoryId}")
+  public ResponseEntity<Page<Post>> getPostByCategory(@PathVariable Long categoryId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails, Pageable pageable) {
+
+    return ResponseEntity.ok(
+        postService.getPostByCategory(categoryId, userDetails.getId(), pageable));
   }
 }

@@ -17,6 +17,8 @@ import com.project.hireup.repository.UserRepository;
 import com.project.hireup.type.PostStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -75,6 +77,20 @@ public class PostService {
       }
     }
     return post;
+  }
+
+  // 특정 카테고리의 게시글 목록 조회(페이징 처리)
+  public Page<Post> getPostByCategory(Long categoryId, Long userId, Pageable pageable) {
+
+    // 게시글 조회 요청을 한 유저 조회
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    // 카테고리가 존재하는지 확인
+    Category category = categoryRepository.findById(categoryId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
+
+    return postRepository.findByCategoryAndVisibility(categoryId, user, pageable);
   }
 
 }
