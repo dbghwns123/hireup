@@ -130,4 +130,19 @@ public class PostService {
     postRepository.save(post);
   }
 
+  // 게시글 삭제
+  public void deletePost(Long postId, Long userId) {
+
+    // 게시글 확인
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_POST));
+
+    // 내가 작성한 게시글이 아닐시
+    if (!Objects.equals(post.getUser().getId(), userId)) {
+      throw new HireUpException(CAN_NOT_UPDATE_POST);
+    }
+
+    postRepository.delete(post);
+  }
+
 }

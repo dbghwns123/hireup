@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,5 +71,15 @@ public class PostController {
     postService.updatePost(postId, userDetails.getId(), requestDto);
 
     return ResponseEntity.ok("게시글이 수정이 성공적으로 완료되었습니다.");
+  }
+
+  // 게시글 삭제
+  @DeleteMapping("/{postId}")
+  public ResponseEntity<String> deletePost(@PathVariable Long postId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    postService.deletePost(postId, userDetails.getId());
+
+    return ResponseEntity.ok("게시글이 성공적으로 삭제되었습니다.");
   }
 }
