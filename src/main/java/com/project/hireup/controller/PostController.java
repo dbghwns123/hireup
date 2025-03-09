@@ -1,0 +1,31 @@
+package com.project.hireup.controller;
+
+import com.project.hireup.dto.PostRequestDto;
+import com.project.hireup.security.UserDetailsImpl;
+import com.project.hireup.service.PostService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/posts")
+public class PostController {
+
+  private final PostService postService;
+
+  // 게시글 생성
+  @PostMapping
+  public ResponseEntity<String> createPost(@RequestBody @Valid PostRequestDto requestDto,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    postService.createPost(requestDto, userDetails.getId());
+
+    return ResponseEntity.ok("게시글이 성공적으로 생성되었습니다.");
+  }
+}
