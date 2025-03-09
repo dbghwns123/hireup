@@ -50,4 +50,13 @@ public class PostController {
     return ResponseEntity.ok(
         postService.getPostByCategory(categoryId, userDetails.getId(), pageable));
   }
+
+  // 전체 게시글 목록 조회(페이징 처리)
+  @GetMapping
+  public ResponseEntity<Page<Post>> getAllPosts(
+      @AuthenticationPrincipal UserDetailsImpl userDetails, Pageable pageable) {
+
+    return ResponseEntity.ok(postService.getAllPosts(userDetails.getId(), pageable));
+
+  }
 }

@@ -93,4 +93,15 @@ public class PostService {
     return postRepository.findByCategoryAndVisibility(categoryId, user, pageable);
   }
 
+  // 전체 게시글 목록 조회(페이징 처리)
+  public Page<Post> getAllPosts(Long id, Pageable pageable) {
+
+    // 게시글 조회 요청을 한 유저 조회
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    // 게시글 조회 (필터링 적용된 JPQL 사용)
+    return postRepository.findAllVisiblePosts(user, pageable);
+  }
+
 }

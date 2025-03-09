@@ -22,4 +22,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   Page<Post> findByCategoryAndVisibility(@Param("categoryId") Long categoryId,
       @Param("user") User user, Pageable pageable);
 
+  @Query("SELECT p FROM Post p WHERE " +
+      "(p.status = 'PUBLIC') OR " +
+      "(p.status = 'FOLLOWER' AND p.user IN " +
+      " (SELECT f.following FROM Follow f WHERE f.follower = :user))")
+  Page<Post> findAllVisiblePosts(@Param("user") User user, Pageable pageable);
+
 }
