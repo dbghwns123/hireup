@@ -4,6 +4,7 @@ import com.project.hireup.dto.PostRequestDto;
 import com.project.hireup.entity.Post;
 import com.project.hireup.security.UserDetailsImpl;
 import com.project.hireup.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,7 @@ public class PostController {
 
   private final PostService postService;
 
-  // 게시글 생성
+  @Operation(summary = "게시글 생성", description = "새로운 게시글을 생성합니다.")
   @PostMapping
   public ResponseEntity<String> createPost(@RequestBody @Valid PostRequestDto requestDto,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -36,7 +37,7 @@ public class PostController {
     return ResponseEntity.ok("게시글이 성공적으로 생성되었습니다.");
   }
 
-  // 특정 게시글 조회
+  @Operation(summary = "특정 게시글 조회", description = "게시글 ID를 통해 특정 게시글을 조회합니다.")
   @GetMapping("/{postId}")
   public ResponseEntity<Post> getPostById(@PathVariable Long postId,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -44,7 +45,7 @@ public class PostController {
     return ResponseEntity.ok(postService.getPostById(postId, userDetails.getId()));
   }
 
-  // 특정 카테고리의 게시글 목록 조회(페이징 처리)
+  @Operation(summary = "특정 카테고리의 게시글 목록 조회", description = "특정 카테고리에 속한 게시글 목록을 페이징 처리하여 조회합니다.")
   @GetMapping("/category/{categoryId}")
   public ResponseEntity<Page<Post>> getPostByCategory(@PathVariable Long categoryId,
       @AuthenticationPrincipal UserDetailsImpl userDetails, Pageable pageable) {
@@ -53,7 +54,7 @@ public class PostController {
         postService.getPostByCategory(categoryId, userDetails.getId(), pageable));
   }
 
-  // 전체 게시글 목록 조회(페이징 처리)
+  @Operation(summary = "전체 게시글 목록 조회", description = "모든 게시글을 페이징 처리하여 조회합니다.")
   @GetMapping
   public ResponseEntity<Page<Post>> getAllPosts(
       @AuthenticationPrincipal UserDetailsImpl userDetails, Pageable pageable) {
@@ -62,7 +63,7 @@ public class PostController {
 
   }
 
-  // 게시글 수정
+  @Operation(summary = "게시글 수정", description = "게시글 ID를 통해 특정 게시글을 수정합니다.")
   @PutMapping("/{postId}")
   public ResponseEntity<String> updatePost(@PathVariable Long postId,
       @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -73,7 +74,7 @@ public class PostController {
     return ResponseEntity.ok("게시글이 수정이 성공적으로 완료되었습니다.");
   }
 
-  // 게시글 삭제
+  @Operation(summary = "게시글 삭제", description = "게시글 ID를 통해 특정 게시글을 삭제합니다.")
   @DeleteMapping("/{postId}")
   public ResponseEntity<String> deletePost(@PathVariable Long postId,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
