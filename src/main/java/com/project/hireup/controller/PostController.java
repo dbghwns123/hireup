@@ -2,7 +2,6 @@ package com.project.hireup.controller;
 
 import com.project.hireup.dto.PostRequestDto;
 import com.project.hireup.dto.PostResponseDto;
-import com.project.hireup.entity.Post;
 import com.project.hireup.security.UserDetailsImpl;
 import com.project.hireup.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
