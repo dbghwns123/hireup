@@ -8,6 +8,7 @@ import static com.project.hireup.type.ErrorCode.NOT_EXIST_POST;
 import static com.project.hireup.type.ErrorCode.NOT_FOUND_POST;
 
 import com.project.hireup.dto.PostRequestDto;
+import com.project.hireup.dto.PostResponseDto;
 import com.project.hireup.entity.Category;
 import com.project.hireup.entity.Post;
 import com.project.hireup.entity.User;
@@ -61,7 +62,7 @@ public class PostService {
   }
 
   // 특정 게시글 조회
-  public Post getPostById(Long postId, Long userId) {
+  public PostResponseDto getPostById(Long postId, Long userId) {
 
     // 게시글 조회 요청을 한 유저 조회
     User user = userRepository.findById(userId)
@@ -87,11 +88,11 @@ public class PostService {
     }
     // 조회수 증가
     post.increaseViewCount();
-    return post;
+    return PostResponseDto.fromEntity(post);
   }
 
   // 특정 카테고리의 게시글 목록 조회(페이징 처리)
-  public Page<Post> getPostByCategory(Long categoryId, Long userId, Pageable pageable) {
+  public Page<PostResponseDto> getPostByCategory(Long categoryId, Long userId, Pageable pageable) {
 
     // 게시글 조회 요청을 한 유저 조회
     User user = userRepository.findById(userId)
@@ -101,18 +102,25 @@ public class PostService {
     Category category = categoryRepository.findById(categoryId)
         .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
 
-    return postRepository.findByCategoryAndVisibility(categoryId, user, pageable);
+    Page<Post> posts = postRepository.findByCategoryAndVisibility(categoryId,
+        user, pageable);
+
+    // Post 엔티티를 PostResponseDto로 변환
+    return posts.map(PostResponseDto::fromEntity);
   }
 
   // 전체 게시글 목록 조회(페이징 처리)
-  public Page<Post> getAllPosts(Long id, Pageable pageable) {
+  public Page<PostResponseDto> getAllPosts(Long id, Pageable pageable) {
 
     // 게시글 조회 요청을 한 유저 조회
     User user = userRepository.findById(id)
         .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
     // 게시글 조회 (필터링 적용된 JPQL 사용)
-    return postRepository.findAllVisiblePosts(user, pageable);
+    Page<Post> posts = postRepository.findAllVisiblePosts(user, pageable);
+
+    // Post 엔티티를 PostResponseDto로 변환
+    return posts.map(PostResponseDto::fromEntity);
   }
 
   // 게시글 수정

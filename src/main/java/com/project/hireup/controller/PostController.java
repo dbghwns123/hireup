@@ -1,6 +1,7 @@
 package com.project.hireup.controller;
 
 import com.project.hireup.dto.PostRequestDto;
+import com.project.hireup.dto.PostResponseDto;
 import com.project.hireup.entity.Post;
 import com.project.hireup.security.UserDetailsImpl;
 import com.project.hireup.service.PostService;
@@ -39,7 +40,7 @@ public class PostController {
 
   @Operation(summary = "특정 게시글 조회", description = "게시글 ID를 통해 특정 게시글을 조회합니다.")
   @GetMapping("/{postId}")
-  public ResponseEntity<Post> getPostById(@PathVariable Long postId,
+  public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long postId,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
     return ResponseEntity.ok(postService.getPostById(postId, userDetails.getId()));
@@ -47,7 +48,7 @@ public class PostController {
 
   @Operation(summary = "특정 카테고리의 게시글 목록 조회", description = "특정 카테고리에 속한 게시글 목록을 페이징 처리하여 조회합니다.")
   @GetMapping("/category/{categoryId}")
-  public ResponseEntity<Page<Post>> getPostByCategory(@PathVariable Long categoryId,
+  public ResponseEntity<Page<PostResponseDto>> getPostByCategory(@PathVariable Long categoryId,
       @AuthenticationPrincipal UserDetailsImpl userDetails, Pageable pageable) {
 
     return ResponseEntity.ok(
@@ -56,7 +57,7 @@ public class PostController {
 
   @Operation(summary = "전체 게시글 목록 조회", description = "모든 게시글을 페이징 처리하여 조회합니다.")
   @GetMapping
-  public ResponseEntity<Page<Post>> getAllPosts(
+  public ResponseEntity<Page<PostResponseDto>> getAllPosts(
       @AuthenticationPrincipal UserDetailsImpl userDetails, Pageable pageable) {
 
     return ResponseEntity.ok(postService.getAllPosts(userDetails.getId(), pageable));
