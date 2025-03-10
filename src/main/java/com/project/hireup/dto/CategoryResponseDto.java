@@ -19,11 +19,11 @@ public class CategoryResponseDto {
   private boolean isNotice;
 
   public static CategoryResponseDto fromEntity(Category category) {
-    return new CategoryResponseDto(
-        category.getId(),
-        category.getName(),
-        category.isNotice()
-    );
+    return CategoryResponseDto.builder()
+        .id(category.getId())
+        .name(category.getName())
+        .isNotice(category.isNotice())
+        .build();
   }
 
 }

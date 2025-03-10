@@ -1,5 +1,6 @@
 package com.project.hireup.service;
 
+import com.project.hireup.dto.CategoryRequestDto;
 import com.project.hireup.dto.CategoryResponseDto;
 import com.project.hireup.entity.Category;
 import com.project.hireup.exception.HireUpException;
@@ -31,6 +32,20 @@ public class CategoryService {
         .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_CATEGORY));
 
     return CategoryResponseDto.fromEntity(category);
+  }
+
+  // 카테고리 생성 (ROLE_ADMIN만 가능)
+  public CategoryResponseDto createCategory(CategoryRequestDto requestDto) {
+
+    // 이미 해당 이름을 가진 카테고리가 있는지 확인
+    if (categoryRepository.existsByName(requestDto.getName())) {
+      throw new HireUpException(ErrorCode.ALREADY_CATEGORY);
+    }
+
+    return CategoryResponseDto.fromEntity(categoryRepository.save(Category.builder()
+        .name(requestDto.getName())
+        .isNotice(requestDto.getIsNotice())
+        .build()));
   }
 
 

@@ -31,6 +31,7 @@ public enum ErrorCode {
   NOT_EXIST_EMAIL_AUTH_KEY(HttpStatus.BAD_REQUEST, "해당 이메일 인증 키는 존재하지 않습니다."),
   ALREADY_AUTH(HttpStatus.BAD_REQUEST, "이미 이메일 인증을 완료했습니다."),
   ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "이미 팔로우한 사용자입니다."),
+  ALREADY_CATEGORY(HttpStatus.BAD_REQUEST, "이미 해당 이름을 가진 카테고리가 있습니다."),
   NOT_EXIST_NAME(HttpStatus.BAD_REQUEST, "해당 이름을 가진 계정이 없습니다."),
   NO_PERMISSION_CATEGORY(HttpStatus.BAD_REQUEST, "해당 카테고리에 대한 권한이 없습니다."),
 
