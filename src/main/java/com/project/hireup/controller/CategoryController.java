@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +22,13 @@ public class CategoryController {
   public ResponseEntity<List<CategoryResponseDto>> getAllCategories() {
     List<CategoryResponseDto> categories = categoryService.getAllCategories();
     return ResponseEntity.ok(categories);
+  }
+
+  // 단일 카테고리 조회
+  @GetMapping("/{id}")
+  public ResponseEntity<CategoryResponseDto> getCategoryById(@PathVariable Long id) {
+    CategoryResponseDto category = categoryService.getCategoryById(id);
+    return ResponseEntity.ok(category);
   }
 
 }
