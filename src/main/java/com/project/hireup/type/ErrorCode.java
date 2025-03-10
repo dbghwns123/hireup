@@ -32,6 +32,8 @@ public enum ErrorCode {
   ALREADY_AUTH(HttpStatus.BAD_REQUEST, "이미 이메일 인증을 완료했습니다."),
   ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "이미 팔로우한 사용자입니다."),
   NOT_EXIST_NAME(HttpStatus.BAD_REQUEST, "해당 이름을 가진 계정이 없습니다."),
+  NO_PERMISSION_CATEGORY(HttpStatus.BAD_REQUEST, "해당 카테고리에 대한 권한이 없습니다."),
+
 
   // 403 FORBIDDEN (접근 금지)
   EMAIL_UNVERIFIED(HttpStatus.FORBIDDEN, "이메일 인증이 완료되지 않은 계정입니다."),

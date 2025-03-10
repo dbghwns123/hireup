@@ -16,6 +16,7 @@ import com.project.hireup.repository.CategoryRepository;
 import com.project.hireup.repository.FollowRepository;
 import com.project.hireup.repository.PostRepository;
 import com.project.hireup.repository.UserRepository;
+import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.PostStatus;
 import jakarta.validation.Valid;
 import java.util.Objects;
@@ -43,6 +44,11 @@ public class PostService {
     // 카테고리 조회
     Category category = categoryRepository.findById(requestDto.getCategoryId())
         .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
+
+    // 카테고리가 공지사항(Admin 권한)인지 확인
+    if (category.isNotice()) {
+      throw new HireUpException(ErrorCode.NO_PERMISSION_CATEGORY);
+    }
 
     postRepository.save(Post.builder()
         .title(requestDto.getTitle())
