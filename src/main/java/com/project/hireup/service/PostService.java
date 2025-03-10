@@ -139,6 +139,11 @@ public class PostService {
     Category category = categoryRepository.findById(requestDto.getCategoryId())
         .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
 
+    // 수정하려는 카테고리가 공지사항 카테고리인지 확인
+    if (category.isNotice()) {
+      throw new HireUpException(ErrorCode.NO_PERMISSION_CATEGORY);
+    }
+
     // 게시글 수정 (엔티티의 메서드 호출)
     post.updatePost(requestDto, category);
 
