@@ -79,6 +79,8 @@ public class PostService {
         throw new HireUpException(CAN_NOT_READ_POST);
       }
     }
+    // 조회수 증가
+    post.increaseViewCount();
     return post;
   }
 

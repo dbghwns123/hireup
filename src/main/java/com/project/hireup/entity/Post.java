@@ -59,6 +59,9 @@ public class Post {
   @Column(nullable = false)
   private PostStatus status = PostStatus.PUBLIC;
 
+  @Column(nullable = false)
+  private int viewCount = 0;
+
   @CreatedDate
   @Column(updatable = false)
   private LocalDateTime createdAt;
@@ -85,6 +88,10 @@ public class Post {
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PostImage> images = new ArrayList<>();
+
+  public void increaseViewCount() {
+    this.viewCount++;
+  }
 
   // 게시글 수정 메서드
   public void updatePost(PostRequestDto requestDto, Category category) {
