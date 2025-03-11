@@ -64,6 +64,7 @@ public class PostService {
   }
 
   // 특정 게시글 조회
+  @Transactional
   public PostResponseDto getPostById(Long postId, Long userId) {
 
     // 게시글 조회 요청을 한 유저 조회
@@ -82,9 +83,7 @@ public class PostService {
     // 게시글의 상태가 Follower 일 때, 현재 유저가 작성자를 팔로우하고 있는지 확인
     if (post.getStatus() == PostStatus.FOLLOWER) {
 
-      boolean isFollowing = followRepository.existsByFollowerAndFollowing(user, post.getUser());
-
-      if (!isFollowing) {
+      if (!followRepository.existsByFollowerAndFollowing(user, post.getUser())) {
         throw new HireUpException(CAN_NOT_READ_POST);
       }
     }
