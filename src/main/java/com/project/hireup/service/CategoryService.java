@@ -57,4 +57,14 @@ public class CategoryService {
     category.updateCategory(requestDto);
     categoryRepository.save(category);
   }
+
+  // 카테고리 삭제 (ROLE_ADMIN)
+  public void deleteCategory(Long id) {
+
+    Category category = categoryRepository.findById(id)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_CATEGORY));
+
+    categoryRepository.delete(category);
+
+  }
 }

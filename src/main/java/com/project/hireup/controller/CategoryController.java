@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +40,7 @@ public class CategoryController {
     return ResponseEntity.ok(category);
   }
 
-  // ROLE_ADMIN만 카테고리 생성 가능
+  // 카테고리 생성 (ROLE_ADMIN)
   @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @PostMapping
   public ResponseEntity<String> createCategory(@RequestBody @Valid CategoryRequestDto requestDto) {
@@ -48,7 +49,7 @@ public class CategoryController {
     return ResponseEntity.ok("카테고리가 정상적으로 생성되었습니다.");
   }
 
-  // ROLE_ADMIN만 카테고리 수정 가능
+  // 카테고리 수정 (ROLE_ADMIN)
   @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @PutMapping("/{id}")
   public ResponseEntity<String> updateCategory(@PathVariable Long id,
@@ -57,4 +58,14 @@ public class CategoryController {
     categoryService.updateCategory(id, requestDto);
     return ResponseEntity.ok("카테고리 정상적으로 수정되었습니다.");
   }
+
+  // 카테고리 삭제 (ROLE_ADMIN)
+  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+  @DeleteMapping("/{id}")
+  public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
+
+    categoryService.deleteCategory(id);
+    return ResponseEntity.ok("카테고리가 정삭적으로 삭제되었습니다.");
+  }
+
 }
