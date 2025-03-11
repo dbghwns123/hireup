@@ -1,5 +1,6 @@
 package com.project.hireup.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.hireup.dto.CategoryRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,6 +36,7 @@ public class Category {
   private boolean isNotice;
 
   @OneToMany(mappedBy = "category")
+  @JsonIgnore // 무한 순환 방지
   private List<Post> posts;
 
   // 카테고리 수정 메서드

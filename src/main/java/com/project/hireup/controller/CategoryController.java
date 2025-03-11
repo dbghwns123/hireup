@@ -56,7 +56,7 @@ public class CategoryController {
       @RequestBody CategoryRequestDto requestDto) {
 
     categoryService.updateCategory(id, requestDto);
-    return ResponseEntity.ok("카테고리 정상적으로 수정되었습니다.");
+    return ResponseEntity.ok("카테고리가 정상적으로 수정되었습니다.");
   }
 
   @Operation(summary = "카테고리 삭제 (관리자 전용)", description = "카테고리 ID를 통해 특정 카테고리를 삭제합니다. 관리자 권한이 필요합니다.")

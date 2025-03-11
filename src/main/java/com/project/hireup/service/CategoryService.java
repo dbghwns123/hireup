@@ -55,7 +55,7 @@ public class CategoryService {
 
   // 카테고리 수정 (ROLE_ADMIN)
   @Transactional
-  @CachePut(value = "category", key = "#id") // 수정된 카테고리를 즉시 캐싱
+  @CachePut(value = "category", key = "#id", unless = "#result == null") // 수정된 카테고리를 즉시 캐싱
   public void updateCategory(Long id, CategoryRequestDto requestDto) {
 
     Category category = categoryRepository.findById(id)
