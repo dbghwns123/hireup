@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,7 @@ public class CategoryService {
   }
 
   // 카테고리 생성 (ROLE_ADMIN)
+  @Transactional
   public CategoryResponseDto createCategory(CategoryRequestDto requestDto) {
 
     // 이미 해당 이름을 가진 카테고리가 있는지 확인
@@ -49,6 +51,7 @@ public class CategoryService {
   }
 
   // 카테고리 수정 (ROLE_ADMIN)
+  @Transactional
   public void updateCategory(Long id, CategoryRequestDto requestDto) {
 
     Category category = categoryRepository.findById(id)
@@ -59,6 +62,7 @@ public class CategoryService {
   }
 
   // 카테고리 삭제 (ROLE_ADMIN)
+  @Transactional
   public void deleteCategory(Long id) {
 
     Category category = categoryRepository.findById(id)

@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +37,7 @@ public class PostService {
   private final FollowRepository followRepository;
 
   // 게시글 생성
+  @Transactional
   public void createPost(@Valid PostRequestDto requestDto, Long id) {
 
     // 유저 조회
@@ -124,6 +126,7 @@ public class PostService {
   }
 
   // 게시글 수정
+  @Transactional
   public void updatePost(Long postId, Long userId, @Valid PostRequestDto requestDto) {
 
     // 게시글 확인
@@ -152,6 +155,7 @@ public class PostService {
   }
 
   // 게시글 삭제
+  @Transactional
   public void deletePost(Long postId, Long userId) {
 
     // 게시글 확인
