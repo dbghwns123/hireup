@@ -37,8 +37,7 @@ public class CategoryController {
   @GetMapping("/{id}")
   public ResponseEntity<CategoryResponseDto> getCategoryById(@PathVariable Long id) {
 
-    CategoryResponseDto category = categoryService.getCategoryById(id);
-    return ResponseEntity.ok(category);
+    return ResponseEntity.ok(CategoryResponseDto.fromEntity(categoryService.getCategoryById(id)));
   }
 
   @Operation(summary = "카테고리 생성 (관리자 전용)", description = "새로운 카테고리를 생성합니다. 관리자 권한이 필요합니다.")

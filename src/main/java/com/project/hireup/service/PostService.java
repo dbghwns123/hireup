@@ -3,7 +3,6 @@ package com.project.hireup.service;
 import static com.project.hireup.type.ErrorCode.CAN_NOT_READ_POST;
 import static com.project.hireup.type.ErrorCode.CAN_NOT_UPDATE_POST;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
-import static com.project.hireup.type.ErrorCode.NOT_EXIST_CATEGORY;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_POST;
 import static com.project.hireup.type.ErrorCode.NOT_FOUND_POST;
 
@@ -13,7 +12,6 @@ import com.project.hireup.entity.Category;
 import com.project.hireup.entity.Post;
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
-import com.project.hireup.repository.CategoryRepository;
 import com.project.hireup.repository.FollowRepository;
 import com.project.hireup.repository.PostRepository;
 import com.project.hireup.repository.UserRepository;
@@ -33,7 +31,7 @@ public class PostService {
 
   private final UserRepository userRepository;
   private final PostRepository postRepository;
-  private final CategoryRepository categoryRepository;
+  private final CategoryService categoryService;
   private final FollowRepository followRepository;
 
   // 게시글 생성
@@ -44,9 +42,8 @@ public class PostService {
     User user = userRepository.findById(id)
         .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
-    // 카테고리 조회
-    Category category = categoryRepository.findById(requestDto.getCategoryId())
-        .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
+    // 캐싱된 카테고리 데이터 활용 (CategoryService에서 가져오기)
+    Category category = categoryService.getCategoryById(requestDto.getCategoryId());
 
     // 카테고리가 공지사항(Admin 권한)인지 확인
     if (category.isNotice()) {
@@ -99,9 +96,8 @@ public class PostService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
-    // 카테고리가 존재하는지 확인
-    Category category = categoryRepository.findById(categoryId)
-        .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
+    // 캐싱된 카테고리 데이터 활용
+    Category category = categoryService.getCategoryById(categoryId);
 
     Page<Post> posts = postRepository.findByCategoryAndVisibility(categoryId,
         user, pageable);
@@ -137,9 +133,8 @@ public class PostService {
       throw new HireUpException(CAN_NOT_UPDATE_POST);
     }
 
-    // 카테고리가 유효한지 확인
-    Category category = categoryRepository.findById(requestDto.getCategoryId())
-        .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
+    // 캐싱된 카테고리 데이터 활용
+    Category category = categoryService.getCategoryById(requestDto.getCategoryId());
 
     // 수정하려는 카테고리가 공지사항 카테고리인지 확인
     if (category.isNotice()) {
@@ -168,5 +163,4 @@ public class PostService {
 
     postRepository.delete(post);
   }
-
 }

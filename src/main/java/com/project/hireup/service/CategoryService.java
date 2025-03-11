@@ -9,6 +9,9 @@ import com.project.hireup.type.ErrorCode;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,16 +30,16 @@ public class CategoryService {
   }
 
   // 특정 카테고리 조회
-  public CategoryResponseDto getCategoryById(Long id) {
+  @Cacheable(value = "category", key = "#id") // 캐싱 적용
+  public Category getCategoryById(Long id) {
 
-    Category category = categoryRepository.findById(id)
+    return categoryRepository.findById(id)
         .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_CATEGORY));
-
-    return CategoryResponseDto.fromEntity(category);
   }
 
   // 카테고리 생성 (ROLE_ADMIN)
   @Transactional
+  @CacheEvict(value = "category", allEntries = true) // 모든 카테고리 캐시 무효화
   public CategoryResponseDto createCategory(CategoryRequestDto requestDto) {
 
     // 이미 해당 이름을 가진 카테고리가 있는지 확인
@@ -52,6 +55,7 @@ public class CategoryService {
 
   // 카테고리 수정 (ROLE_ADMIN)
   @Transactional
+  @CachePut(value = "category", key = "#id") // 수정된 카테고리를 즉시 캐싱
   public void updateCategory(Long id, CategoryRequestDto requestDto) {
 
     Category category = categoryRepository.findById(id)
@@ -63,6 +67,7 @@ public class CategoryService {
 
   // 카테고리 삭제 (ROLE_ADMIN)
   @Transactional
+  @CacheEvict(value = "category", key = "#id") // 특정 카테고리 캐시 무효화
   public void deleteCategory(Long id) {
 
     Category category = categoryRepository.findById(id)
