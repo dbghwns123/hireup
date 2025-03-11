@@ -34,7 +34,7 @@ public class CategoryService {
     return CategoryResponseDto.fromEntity(category);
   }
 
-  // 카테고리 생성 (ROLE_ADMIN만 가능)
+  // 카테고리 생성 (ROLE_ADMIN)
   public CategoryResponseDto createCategory(CategoryRequestDto requestDto) {
 
     // 이미 해당 이름을 가진 카테고리가 있는지 확인
@@ -48,5 +48,13 @@ public class CategoryService {
         .build()));
   }
 
+  // 카테고리 수정 (ROLE_ADMIN)
+  public void updateCategory(Long id, CategoryRequestDto requestDto) {
 
+    Category category = categoryRepository.findById(id)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_CATEGORY));
+
+    category.updateCategory(requestDto);
+    categoryRepository.save(category);
+  }
 }

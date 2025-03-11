@@ -1,5 +1,6 @@
 package com.project.hireup.entity;
 
+import com.project.hireup.dto.CategoryRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,4 +36,10 @@ public class Category {
 
   @OneToMany(mappedBy = "category")
   private List<Post> posts;
+
+  // 카테고리 수정 메서드
+  public void updateCategory(CategoryRequestDto requestDto) {
+    this.name = requestDto.getName();
+    this.isNotice = requestDto.getIsNotice();
+  }
 }
