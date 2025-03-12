@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,7 +34,10 @@ public class SecurityConfig {
             .requestMatchers("/api/auth/**").permitAll() // 인증 없이 접근 가능한 경로(모든 사용자 접근 허용)
             .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
             .permitAll() // Swagger 관련 경로 허용
-            .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN") // Admin만 접근 가능
+            .requestMatchers("/api/admin/**", "/api/category/**")
+            .hasAuthority("ROLE_ADMIN") // Admin만 접근 가능
+            .requestMatchers(HttpMethod.GET, "/api/category/**")
+            .hasAnyAuthority("ROLE_ADMIN", "ROLE_USER") // 카테고리 조회는 모든 사용자 가능
             .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
         )
         .addFilterBefore(jwtAuthenticationFilter,

@@ -26,6 +26,22 @@ spring:
           starttls:
             enable: true
 
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force-request: true
+      force-response: true
+
+  data:
+    redis:
+      host: localhost  # Redis 서버 주소 (Docker 사용 시 컨테이너 이름)
+      port: 6379       # Redis 기본 포트
+      password:        # 비밀번호가 있다면 입력
+      timeout: 6000ms  # 연결 타임아웃
+    cache:
+      type: redis      # 캐시 저장소를 Redis로 설정
+
   admin:
     token: ${ADMIN_TOKEN}
 
@@ -35,9 +51,4 @@ spring:
   jwt:
     secret: ${JWT_SECRET}
 
-  servlet:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force-request: true
-      force-response: true
+

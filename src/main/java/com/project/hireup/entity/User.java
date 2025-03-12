@@ -1,5 +1,6 @@
 package com.project.hireup.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import jakarta.persistence.CascadeType;
@@ -66,6 +67,7 @@ public class User {
   private LocalDateTime updatedAt;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonIgnore // 무한 순환 방지
   private List<Post> posts;
 
   @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)

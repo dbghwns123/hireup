@@ -19,14 +19,23 @@ public enum ErrorCode {
   NOT_EQUAL_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "기존 비밀번호가 일치하지 않습니다."),
   DO_NOT_EQUAL_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "기존 비밀번호로는 변경할 수 없습니다."),
   DO_NOT_FOLLOWING_MYSELF(HttpStatus.BAD_REQUEST, "자신의 계정은 팔로잉할 수 없습니다."),
+  CAN_NOT_READ_POST(HttpStatus.BAD_REQUEST, "해당 게시글을 읽을 수 있는 권한이 없습니다."),
+  CAN_NOT_UPDATE_POST(HttpStatus.BAD_REQUEST, "해당 게시글을 수정할 수 있는 권한이 없습니다."),
+  CAN_NOT_DELETE_CATEGORY(HttpStatus.BAD_REQUEST, "해당 카테고리는 삭제할 수 없습니다."),
   INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 올바르지 않습니다."),
   NOT_EQUAL_TOKEN(HttpStatus.BAD_REQUEST, "토큰 값이 일치하지 않습니다."),
+  NOT_FOUND_POST(HttpStatus.BAD_REQUEST, "해당 게시글을 찾을 수 없습니다."),
   NOT_EXIST_ACCOUNT(HttpStatus.BAD_REQUEST, "해당 계정은 존재하지 않습니다."),
   NOT_EXIST_FOLLOW(HttpStatus.BAD_REQUEST, "팔로우 관계가 존재하지 않습니다."),
+  NOT_EXIST_CATEGORY(HttpStatus.BAD_REQUEST, "해당 카테고리는 존재하지 않습니다."),
+  NOT_EXIST_POST(HttpStatus.BAD_REQUEST, "해당 게시글은 존재하지 않습니다."),
   NOT_EXIST_EMAIL_AUTH_KEY(HttpStatus.BAD_REQUEST, "해당 이메일 인증 키는 존재하지 않습니다."),
   ALREADY_AUTH(HttpStatus.BAD_REQUEST, "이미 이메일 인증을 완료했습니다."),
   ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "이미 팔로우한 사용자입니다."),
+  ALREADY_CATEGORY(HttpStatus.BAD_REQUEST, "이미 해당 이름을 가진 카테고리가 있습니다."),
   NOT_EXIST_NAME(HttpStatus.BAD_REQUEST, "해당 이름을 가진 계정이 없습니다."),
+  NO_PERMISSION_CATEGORY(HttpStatus.BAD_REQUEST, "해당 카테고리에 대한 권한이 없습니다."),
+
 
   // 403 FORBIDDEN (접근 금지)
   EMAIL_UNVERIFIED(HttpStatus.FORBIDDEN, "이메일 인증이 완료되지 않은 계정입니다."),

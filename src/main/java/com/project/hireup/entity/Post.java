@@ -1,6 +1,8 @@
 package com.project.hireup.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.hireup.converter.StringSetConverter;
+import com.project.hireup.dto.PostRequestDto;
 import com.project.hireup.type.PostStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -58,6 +60,9 @@ public class Post {
   @Column(nullable = false)
   private PostStatus status = PostStatus.PUBLIC;
 
+  @Column(nullable = false)
+  private int viewCount = 0;
+
   @CreatedDate
   @Column(updatable = false)
   private LocalDateTime createdAt;
@@ -84,5 +89,18 @@ public class Post {
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PostImage> images = new ArrayList<>();
+
+  public void increaseViewCount() {
+    this.viewCount++;
+  }
+
+  // 게시글 수정 메서드
+  public void updatePost(PostRequestDto requestDto, Category category) {
+    this.title = requestDto.getTitle();
+    this.content = requestDto.getContent();
+    this.category = category;
+    this.hashtags = requestDto.getHashtags();
+    this.status = requestDto.getStatus();
+  }
 
 }
