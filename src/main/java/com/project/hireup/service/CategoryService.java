@@ -5,6 +5,7 @@ import com.project.hireup.dto.CategoryResponseDto;
 import com.project.hireup.entity.Category;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.CategoryRepository;
+import com.project.hireup.repository.PostRepository;
 import com.project.hireup.type.ErrorCode;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
   private final CategoryRepository categoryRepository;
+  private final PostRepository postRepository;
 
   // 모든 카테고리 조회
   public List<CategoryResponseDto> getAllCategories() {
@@ -73,7 +75,11 @@ public class CategoryService {
     Category category = categoryRepository.findById(id)
         .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_CATEGORY));
 
-    categoryRepository.delete(category);
+    // 해당 카테고리를 가진 게시글이 있다면 해당 카테고리 삭제 불가
+    if (postRepository.countByCategory(category) > 0) {
+      throw new HireUpException(ErrorCode.CAN_NOT_DELETE_CATEGORY);
+    }
 
+    categoryRepository.delete(category);
   }
 }

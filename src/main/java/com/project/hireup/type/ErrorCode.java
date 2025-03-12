@@ -21,6 +21,7 @@ public enum ErrorCode {
   DO_NOT_FOLLOWING_MYSELF(HttpStatus.BAD_REQUEST, "자신의 계정은 팔로잉할 수 없습니다."),
   CAN_NOT_READ_POST(HttpStatus.BAD_REQUEST, "해당 게시글을 읽을 수 있는 권한이 없습니다."),
   CAN_NOT_UPDATE_POST(HttpStatus.BAD_REQUEST, "해당 게시글을 수정할 수 있는 권한이 없습니다."),
+  CAN_NOT_DELETE_CATEGORY(HttpStatus.BAD_REQUEST, "해당 카테고리는 삭제할 수 없습니다."),
   INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 올바르지 않습니다."),
   NOT_EQUAL_TOKEN(HttpStatus.BAD_REQUEST, "토큰 값이 일치하지 않습니다."),
   NOT_FOUND_POST(HttpStatus.BAD_REQUEST, "해당 게시글을 찾을 수 없습니다."),

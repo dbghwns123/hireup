@@ -15,6 +15,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
   Page<Post> findAllByCategory(Category category, Pageable pageable);
 
+  long countByCategory(Category category);
+
   @Query("SELECT p FROM Post p WHERE p.category.id = :categoryId " +
       "AND (p.status = 'PUBLIC' OR " +
       "     (p.status = 'FOLLOWER' AND p.user IN " +
