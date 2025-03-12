@@ -1,5 +1,6 @@
 package com.project.hireup.service;
 
+import static com.project.hireup.type.ErrorCode.*;
 import static com.project.hireup.type.ErrorCode.CAN_NOT_READ_POST;
 import static com.project.hireup.type.ErrorCode.CAN_NOT_UPDATE_POST;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
@@ -47,7 +48,7 @@ public class PostService {
 
     // 카테고리가 공지사항(Admin 권한)인지 확인
     if (category.isNotice()) {
-      throw new HireUpException(ErrorCode.NO_PERMISSION_CATEGORY);
+      throw new HireUpException(NO_PERMISSION_CATEGORY);
     }
 
     postRepository.save(Post.builder()
@@ -138,7 +139,7 @@ public class PostService {
 
     // 수정하려는 카테고리가 공지사항 카테고리인지 확인
     if (category.isNotice()) {
-      throw new HireUpException(ErrorCode.NO_PERMISSION_CATEGORY);
+      throw new HireUpException(NO_PERMISSION_CATEGORY);
     }
 
     // 게시글 수정 (엔티티의 메서드 호출)

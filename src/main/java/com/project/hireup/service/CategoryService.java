@@ -1,5 +1,7 @@
 package com.project.hireup.service;
 
+import static com.project.hireup.type.ErrorCode.*;
+
 import com.project.hireup.dto.CategoryRequestDto;
 import com.project.hireup.dto.CategoryResponseDto;
 import com.project.hireup.entity.Category;
@@ -36,7 +38,7 @@ public class CategoryService {
   public Category getCategoryById(Long id) {
 
     return categoryRepository.findById(id)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_CATEGORY));
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
   }
 
   // 카테고리 생성 (ROLE_ADMIN)
@@ -46,7 +48,7 @@ public class CategoryService {
 
     // 이미 해당 이름을 가진 카테고리가 있는지 확인
     if (categoryRepository.existsByName(requestDto.getName())) {
-      throw new HireUpException(ErrorCode.ALREADY_CATEGORY);
+      throw new HireUpException(ALREADY_CATEGORY);
     }
 
     return CategoryResponseDto.fromEntity(categoryRepository.save(Category.builder()
@@ -61,7 +63,7 @@ public class CategoryService {
   public void updateCategory(Long id, CategoryRequestDto requestDto) {
 
     Category category = categoryRepository.findById(id)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_CATEGORY));
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
 
     category.updateCategory(requestDto);
     categoryRepository.save(category);
@@ -73,11 +75,11 @@ public class CategoryService {
   public void deleteCategory(Long id) {
 
     Category category = categoryRepository.findById(id)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_CATEGORY));
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_CATEGORY));
 
     // 해당 카테고리를 가진 게시글이 있다면 해당 카테고리 삭제 불가
     if (postRepository.countByCategory(category) > 0) {
-      throw new HireUpException(ErrorCode.CAN_NOT_DELETE_CATEGORY);
+      throw new HireUpException(CAN_NOT_DELETE_CATEGORY);
     }
 
     categoryRepository.delete(category);

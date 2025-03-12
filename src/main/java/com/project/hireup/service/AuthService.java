@@ -9,6 +9,8 @@ import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_EMAIL_AUTH_KEY;
 import static com.project.hireup.type.ErrorCode.SUSPENDED_USER;
 import static com.project.hireup.type.ErrorCode.USER_ALREADY_EXISTS;
+import static com.project.hireup.type.UserRole.*;
+import static com.project.hireup.type.UserStatus.*;
 
 import com.project.hireup.component.MailComponent;
 import com.project.hireup.dto.SignUpRequestDto;
@@ -67,7 +69,7 @@ public class AuthService {
         .emailAuthKey(uuid)
         .userRole(role)
         .emailAuthYn(false)
-        .status(UserStatus.UNVERIFIED)
+        .status(UNVERIFIED)
         .build();
     userRepository.save(user);
 
@@ -95,10 +97,10 @@ public class AuthService {
     }
 
     // 계정 상태 확인
-    if (user.getStatus() == UserStatus.UNVERIFIED) { // 이메일 인증이 되지 않은 유저 로그인 방지
+    if (user.getStatus() == UNVERIFIED) { // 이메일 인증이 되지 않은 유저 로그인 방지
       throw new HireUpException(EMAIL_UNVERIFIED);
     }
-    if (user.getStatus() == UserStatus.SUSPENDED) { // 정지된 유저 로그인 방지
+    if (user.getStatus() == SUSPENDED) { // 정지된 유저 로그인 방지
       throw new HireUpException(SUSPENDED_USER);
     }
 
@@ -119,7 +121,7 @@ public class AuthService {
     }
 
     user.setEmailAuthYn(true);
-    user.setStatus(UserStatus.ACTIVE);
+    user.setStatus(ACTIVE);
     userRepository.save(user);
   }
 
@@ -127,9 +129,9 @@ public class AuthService {
   private UserRole determineUserRole(SignUpRequestDto requestDto) {
     if (requestDto.isAdmin()) {
       validateAdminToken(requestDto.getAdminToken());
-      return UserRole.ROLE_ADMIN;
+      return ROLE_ADMIN;
     }
-    return UserRole.ROLE_USER;
+    return ROLE_USER;
   }
 
   private void validateAdminToken(String adminToken) {
