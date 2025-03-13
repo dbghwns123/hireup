@@ -46,4 +46,13 @@ public class LikeController {
     return ResponseEntity.ok(Map.of("likeCount", count));
   }
 
+  @Operation(summary = "좋아요 상태 확인", description = "사용자가 게시글에 좋아요를 눌렀는지 확인합니다.")
+  @GetMapping("/posts/{postId}/likes/status")
+  public ResponseEntity<Map<String, Boolean>> getLikeStatus(@PathVariable Long postId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    boolean hasLiked = likeService.hasUserLikedPost(postId, userDetails.getId());
+    return ResponseEntity.ok(Map.of("liked", hasLiked));
+  }
+
 }

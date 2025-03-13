@@ -129,4 +129,20 @@ public class LikeService {
     }
   }
 
+  /**
+   * 사용자가 게시글에 좋아요를 눌렀는지 확인
+   */
+  public boolean hasUserLikedPost(Long postId, Long userId) {
+    // Redis 확인
+    String userLikedKey = USER_LIKED_KEY + userId;
+    Boolean hasLiked = redisTemplate.opsForSet().isMember(userLikedKey, postId.toString());
+
+    if (Boolean.TRUE.equals(hasLiked)) {
+      return true;
+    }
+
+    // DB 확인
+    return likeRepository.existsByUserIdAndPostId(userId, postId);
+  }
+
 }
