@@ -103,4 +103,29 @@ public class CommentService {
     commentRepository.save(comment);
   }
 
+  // 댓글 삭제
+  @Transactional
+  public void deleteComment(Long commentId, Long userId) {
+
+    // 댓글 존재 여부 확인
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_COMMENT));
+
+    // 작성자 정보 확인
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    // 작성자 본인 또는 게시글 작성자 확인 (게시글 작성자도 댓글 삭제 가능)
+    boolean isCommentOwner = comment.getUser().getId().equals(userId);
+    boolean isPostOwner = comment.getPost().getUser().getId().equals(userId);
+
+    if (!isCommentOwner && !isPostOwner) {
+      throw new HireUpException(CAN_NOT_DELETE_COMMENT);
+    }
+
+    // 댓글 삭제
+    commentRepository.delete(comment);
+
+  }
+
 }

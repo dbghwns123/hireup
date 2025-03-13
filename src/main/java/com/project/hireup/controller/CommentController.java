@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,5 +56,14 @@ public class CommentController {
 
     commentService.updateComment(commentId, userDetails.getId(), requestDto);
     return ResponseEntity.ok("댓글을 성공적으로 수정하였습니다.");
+  }
+
+  @Operation(summary = "댓글 삭제", description = "작성한 댓글을 삭제합니다.")
+  @DeleteMapping("/comments/{commentId}")
+  public ResponseEntity<String> deleteComment(@PathVariable Long commentId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    commentService.deleteComment(commentId, userDetails.getId());
+    return ResponseEntity.ok("댓글이 삭제되었습니다.");
   }
 }
