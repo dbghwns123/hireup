@@ -10,8 +10,10 @@ import com.project.hireup.repository.PostRepository;
 import com.project.hireup.repository.UserRepository;
 import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.PostStatus;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -143,6 +145,32 @@ public class LikeService {
 
     // DB 확인
     return likeRepository.existsByUserIdAndPostId(userId, postId);
+  }
+
+  /**
+   * Redis와 DB 동기화 (스케줄링된 메서드)
+   */
+  @Scheduled(fixedRate = 300000) // 5분마다 실행
+  @Transactional
+  public void synchronizeLikeCounts() {
+    Set<String> keys = redisTemplate.keys(LIKE_COUNT_KEY + "*");
+    if (keys == null || keys.isEmpty()) {
+      return;
+    }
+
+    for (String key : keys) {
+      String postIdStr = key.substring(LIKE_COUNT_KEY.length());
+      Long postId = Long.parseLong(postIdStr);
+      String countStr = redisTemplate.opsForValue().get(key);
+
+      if (countStr != null) {
+        int count = Integer.parseInt(countStr);
+        postRepository.findById(postId).ifPresent(post -> {
+          post.setLikeCount(count);
+          postRepository.save(post);
+        });
+      }
+    }
   }
 
 }
