@@ -1,0 +1,78 @@
+package com.project.hireup.service;
+
+import com.project.hireup.entity.Like;
+import com.project.hireup.entity.Post;
+import com.project.hireup.entity.User;
+import com.project.hireup.exception.HireUpException;
+import com.project.hireup.repository.FollowRepository;
+import com.project.hireup.repository.LikeRepository;
+import com.project.hireup.repository.PostRepository;
+import com.project.hireup.repository.UserRepository;
+import com.project.hireup.type.ErrorCode;
+import com.project.hireup.type.PostStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class LikeService {
+
+  private final LikeRepository likeRepository;
+  private final PostRepository postRepository;
+  private final UserRepository userRepository;
+  private final FollowRepository followRepository;
+  private final StringRedisTemplate redisTemplate;
+
+  private static final String LIKE_COUNT_KEY = "post:like:count:";
+  private static final String USER_LIKED_KEY = "user:liked:";
+
+  @Transactional
+  public void addLike(Long postId, Long userId) {
+    // 게시글 존재 여부 확인
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_FOUND_POST));
+
+    // 사용자 존재 여부 확인
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_ACCOUNT));
+
+    // 게시글 상태가 PRIVATE인 경우 좋아요 불가
+    if (post.getStatus() == PostStatus.PRIVATE) {
+      throw new HireUpException(ErrorCode.PRIVATE_POST);
+    }
+
+    // 게시글 상태가 FOLLOWER인 경우 팔로워인지 확인
+    if (post.getStatus() == PostStatus.FOLLOWER) {
+      if (!followRepository.existsByFollowerAndFollowing(user, post.getUser())) {
+        throw new HireUpException(ErrorCode.NOT_FOLLOWER);
+      }
+    }
+
+    // 이미 좋아요를 눌렀는지 확인 (Redis 먼저 확인 후 DB 확인)
+    String userLikedKey = USER_LIKED_KEY + userId;
+    Boolean hasLiked = redisTemplate.opsForSet().isMember(userLikedKey, postId.toString());
+
+    if (Boolean.TRUE.equals(hasLiked) || likeRepository.existsByUserAndPost(user, post)) {
+      throw new HireUpException(ErrorCode.ALREADY_LIKED);
+    }
+
+    // DB에 좋아요 저장
+    Like like = Like.builder()
+        .user(user)
+        .post(post)
+        .build();
+    likeRepository.save(like);
+
+    // Redis에 좋아요 정보 추가
+    redisTemplate.opsForSet().add(userLikedKey, postId.toString());
+    redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + postId);
+
+    // 게시글의 좋아요 수 증가
+    post.increaseLikeCount();
+    postRepository.save(post);
+  }
+
+}
