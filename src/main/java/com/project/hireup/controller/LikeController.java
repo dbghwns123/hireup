@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,15 @@ public class LikeController {
 
     likeService.addLike(postId, userDetails.getId());
     return ResponseEntity.ok("좋아요를 눌렀습니다!");
+  }
+
+  @Operation(summary = "좋아요 취소", description = "게시글에 추가한 좋아요를 취소합니다.")
+  @DeleteMapping("/posts/{postId}/likes")
+  public ResponseEntity<String> removeLike(@PathVariable Long postId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    likeService.removeLike(postId, userDetails.getId());
+    return ResponseEntity.ok("좋아요를 취소했습니다.");
   }
 
 }

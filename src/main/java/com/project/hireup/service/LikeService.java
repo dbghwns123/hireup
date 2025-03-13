@@ -29,6 +29,9 @@ public class LikeService {
   private static final String LIKE_COUNT_KEY = "post:like:count:";
   private static final String USER_LIKED_KEY = "user:liked:";
 
+  /**
+   * 좋아요 추가
+   */
   @Transactional
   public void addLike(Long postId, Long userId) {
     // 게시글 존재 여부 확인
@@ -72,6 +75,36 @@ public class LikeService {
 
     // 게시글의 좋아요 수 증가
     post.increaseLikeCount();
+    postRepository.save(post);
+  }
+
+  /**
+   * 좋아요 취소
+   */
+  @Transactional
+  public void removeLike(Long postId, Long userId) {
+    // 게시글 존재 여부 확인
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_FOUND_POST));
+
+    // 사용자 존재 여부 확인
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_ACCOUNT));
+
+    // 좋아요 정보 확인
+    Like like = likeRepository.findByUserAndPost(user, post)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_LIKE));
+
+    // DB에서 좋아요 정보 삭제
+    likeRepository.delete(like);
+
+    // Redis에서 좋아요 정보 삭제
+    String userLikedKey = USER_LIKED_KEY + userId;
+    redisTemplate.opsForSet().remove(userLikedKey, postId.toString());
+    redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + postId);
+
+    // 게시글의 좋아요 수 감소
+    post.decreaseLikeCount();
     postRepository.save(post);
   }
 
