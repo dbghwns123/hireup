@@ -108,4 +108,25 @@ public class LikeService {
     postRepository.save(post);
   }
 
+  /**
+   * 게시글의 좋아요 수 조회
+   */
+  public Long getLikeCount(Long postId) {
+    // 게시글 존재 여부 확인
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_FOUND_POST));
+
+    // Redis에서 좋아요 수 조회 (없으면 DB 조회 후 Redis 갱신)
+    String countKey = LIKE_COUNT_KEY + postId;
+    String count = redisTemplate.opsForValue().get(countKey);
+
+    if (count != null) {
+      return Long.parseLong(count);
+    } else {
+      long likeCount = likeRepository.countByPostId(postId);
+      redisTemplate.opsForValue().set(countKey, String.valueOf(likeCount));
+      return likeCount;
+    }
+  }
+
 }

@@ -3,10 +3,12 @@ package com.project.hireup.controller;
 import com.project.hireup.security.UserDetailsImpl;
 import com.project.hireup.service.LikeService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +37,13 @@ public class LikeController {
 
     likeService.removeLike(postId, userDetails.getId());
     return ResponseEntity.ok("좋아요를 취소했습니다.");
+  }
+
+  @Operation(summary = "좋아요 수 조회", description = "게시글의 좋아요 수를 조회합니다.")
+  @GetMapping("/posts/{postId}/likes/count")
+  public ResponseEntity<Map<String, Long>> getLikeCount(@PathVariable Long postId) {
+    Long count = likeService.getLikeCount(postId);
+    return ResponseEntity.ok(Map.of("likeCount", count));
   }
 
 }
