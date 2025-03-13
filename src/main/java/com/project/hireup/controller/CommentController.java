@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,5 +45,15 @@ public class CommentController {
 
     Page<CommentResponseDto> comments = commentService.getCommentsByPost(postId, pageable);
     return ResponseEntity.ok(comments);
+  }
+
+  @Operation(summary = "댓글 수정", description = "작성한 댓글을 수정합니다.")
+  @PutMapping("/comments/{commentId}")
+  public ResponseEntity<String> updateComment(@PathVariable Long commentId,
+      @RequestBody @Valid CommentRequestDto requestDto,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+    commentService.updateComment(commentId, userDetails.getId(), requestDto);
+    return ResponseEntity.ok("댓글을 성공적으로 수정하였습니다.");
   }
 }

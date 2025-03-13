@@ -1,5 +1,6 @@
 package com.project.hireup.entity;
 
+import com.project.hireup.dto.CommentRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -49,4 +50,9 @@ public class Comment {
   @ManyToOne
   @JoinColumn(name = "post_id", nullable = false)
   private Post post;
+
+  // 댓글 수정 메서드
+  public void updateComment(CommentRequestDto requestDto) {
+    this.content = requestDto.getContent();
+  }
 }

@@ -19,6 +19,7 @@ import com.project.hireup.repository.UserRepository;
 import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.PostStatus;
 import jakarta.validation.Valid;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -77,6 +78,29 @@ public class CommentService {
     // 최상위 댓글만 가져오기
     Page<Comment> comments = commentRepository.findByPostOrderByCreatedAtDesc(post, pageable);
     return comments.map(CommentResponseDto::fromEntity);
+  }
+
+  // 댓글 수정
+  @Transactional
+  public void updateComment(Long commentId, Long userId, @Valid CommentRequestDto requestDto) {
+
+    // 댓글 존재 여부 확인
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_COMMENT));
+
+    // 작성자 정보 확인
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    // 작성자 본인 확인
+    if (!Objects.equals(comment.getUser().getId(), userId)) {
+      throw new HireUpException(NOT_COMMENT_OWNER);
+    }
+    // 댓글 수정 (엔티티의 메서드 호출)
+    comment.updateComment(requestDto);
+
+    // 변경 사항 저장
+    commentRepository.save(comment);
   }
 
 }
