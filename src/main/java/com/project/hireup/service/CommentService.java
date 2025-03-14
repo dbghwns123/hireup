@@ -1,7 +1,9 @@
 package com.project.hireup.service;
 
-import static com.project.hireup.type.ErrorCode.*;
+import static com.project.hireup.type.ErrorCode.CAN_NOT_DELETE_COMMENT;
+import static com.project.hireup.type.ErrorCode.NOT_COMMENT_OWNER;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_COMMENT;
 import static com.project.hireup.type.ErrorCode.NOT_FOLLOWER;
 import static com.project.hireup.type.ErrorCode.NOT_FOUND_POST;
 import static com.project.hireup.type.ErrorCode.PRIVATE_POST;
@@ -16,7 +18,6 @@ import com.project.hireup.repository.CommentRepository;
 import com.project.hireup.repository.FollowRepository;
 import com.project.hireup.repository.PostRepository;
 import com.project.hireup.repository.UserRepository;
-import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.PostStatus;
 import jakarta.validation.Valid;
 import java.util.Objects;
@@ -54,11 +55,10 @@ public class CommentService {
     }
 
     // 게시글의 상태가 Follower 일 때, 현재 유저가 작성자를 팔로우하고 있는지 확인
-    if (post.getStatus() == PostStatus.FOLLOWER) {
+    if (post.getStatus() == PostStatus.FOLLOWER &&
+        !followRepository.existsByFollowerAndFollowing(user, post.getUser())) {
 
-      if (!followRepository.existsByFollowerAndFollowing(user, post.getUser())) {
-        throw new HireUpException(NOT_FOLLOWER);
-      }
+      throw new HireUpException(NOT_FOLLOWER);
     }
 
     commentRepository.save(Comment.builder()
