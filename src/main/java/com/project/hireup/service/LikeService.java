@@ -105,7 +105,7 @@ public class LikeService {
 
     // Redis에서 좋아요 정보 삭제 및 좋아요 수 감소 (Redis의 Atomic Decrement 활용)
     String userLikedKey = USER_LIKED_KEY + userId;
-    redisTemplate.opsForSet().remove(userLikedKey, postId);
+    redisTemplate.opsForSet().remove(userLikedKey, postId.toString());
 
     Long updatedLikeCount = redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + postId);
 
