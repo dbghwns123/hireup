@@ -1,5 +1,8 @@
 package com.project.hireup.service;
 
+import static com.project.hireup.type.NotificationType.LIKE;
+
+import com.project.hireup.component.MailComponent;
 import com.project.hireup.entity.Like;
 import com.project.hireup.entity.Post;
 import com.project.hireup.entity.User;
@@ -31,6 +34,8 @@ public class LikeService {
   private final UserRepository userRepository;
   private final FollowRepository followRepository;
   private final StringRedisTemplate redisTemplate;
+  private final MailComponent mailComponent;
+  private final NotificationService notificationService;
 
   private static final String LIKE_COUNT_KEY = "post:like:count:";
   private static final String USER_LIKED_KEY = "user:liked:";
@@ -81,6 +86,18 @@ public class LikeService {
 //    assert updatedLikeCount != null;
     post.setLikeCount(updatedLikeCount.intValue());
     postRepository.save(post);
+
+    // 게시글 작성자에게 메일 전송
+    String email = post.getUser().getEmail();
+    String subject = "게시글에 새로운 좋아요가 추가되었습니다!";
+    String text = "<p>안녕하세요, " + post.getUser().getName() + "님.</p>"
+        + "<p>회원 <strong>" + user.getName() + "</strong>님이 귀하의 게시글 <strong>\"" + post.getTitle() + "\"</strong>에 좋아요를 눌렀습니다.</p>"
+        + "<p>감사합니다.</p>";
+
+    mailComponent.sendMail(email, subject, text);
+
+    // 게시글 작성자에게 알림 저장
+    notificationService.createNotification(post.getUser(), LIKE);
   }
 
   /**
