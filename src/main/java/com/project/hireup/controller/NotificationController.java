@@ -29,7 +29,8 @@ public class NotificationController {
       @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
     // 사용자 ID를 기반으로 알림 조회
-    Page<NotificationResponseDto> notifications = notificationService.getNotificationsByUser(userDetails.getId(), pageable);
+    Page<NotificationResponseDto> notifications = notificationService.getNotificationsByUser(
+        userDetails.getId(), pageable);
     return ResponseEntity.ok(notifications);
   }
 }

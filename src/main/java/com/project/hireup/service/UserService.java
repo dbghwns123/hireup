@@ -1,9 +1,9 @@
 package com.project.hireup.service;
 
-import static com.project.hireup.type.ErrorCode.*;
 import static com.project.hireup.type.ErrorCode.DO_NOT_EQUAL_CURRENT_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CONFIRM_PASSWORD;
 import static com.project.hireup.type.ErrorCode.NOT_EQUAL_CURRENT_PASSWORD;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_NAME;
 import static com.project.hireup.type.UserRole.ROLE_USER;
 import static com.project.hireup.type.UserStatus.ACTIVE;
@@ -14,7 +14,6 @@ import com.project.hireup.dto.UserResponseDto;
 import com.project.hireup.entity.User;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.UserRepository;
-import com.project.hireup.type.ErrorCode;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;

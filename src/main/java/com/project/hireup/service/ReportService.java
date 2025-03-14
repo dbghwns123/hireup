@@ -1,8 +1,12 @@
 package com.project.hireup.service;
 
-import static com.project.hireup.type.ErrorCode.*;
-import static com.project.hireup.type.PostStatus.*;
-import static com.project.hireup.type.UserRole.*;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_POST;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_REPORT;
+import static com.project.hireup.type.ErrorCode.NO_PERMISSION;
+import static com.project.hireup.type.ErrorCode.NO_PERMISSION_POST;
+import static com.project.hireup.type.PostStatus.PRIVATE;
+import static com.project.hireup.type.UserRole.ROLE_ADMIN;
 
 import com.project.hireup.dto.ReportRequestDto;
 import com.project.hireup.dto.ReportResponseDto;
@@ -13,9 +17,6 @@ import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.PostRepository;
 import com.project.hireup.repository.ReportRepository;
 import com.project.hireup.repository.UserRepository;
-import com.project.hireup.type.ErrorCode;
-import com.project.hireup.type.PostStatus;
-import com.project.hireup.type.UserRole;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Objects;

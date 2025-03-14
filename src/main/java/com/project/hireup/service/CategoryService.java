@@ -1,6 +1,8 @@
 package com.project.hireup.service;
 
-import static com.project.hireup.type.ErrorCode.*;
+import static com.project.hireup.type.ErrorCode.ALREADY_CATEGORY;
+import static com.project.hireup.type.ErrorCode.CAN_NOT_DELETE_CATEGORY;
+import static com.project.hireup.type.ErrorCode.NOT_EXIST_CATEGORY;
 
 import com.project.hireup.dto.CategoryRequestDto;
 import com.project.hireup.dto.CategoryResponseDto;
@@ -8,7 +10,6 @@ import com.project.hireup.entity.Category;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.CategoryRepository;
 import com.project.hireup.repository.PostRepository;
-import com.project.hireup.type.ErrorCode;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;

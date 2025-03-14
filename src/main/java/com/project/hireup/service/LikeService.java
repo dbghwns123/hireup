@@ -1,6 +1,8 @@
 package com.project.hireup.service;
 
+import static com.project.hireup.type.ErrorCode.*;
 import static com.project.hireup.type.NotificationType.LIKE;
+import static com.project.hireup.type.PostStatus.*;
 
 import com.project.hireup.component.MailComponent;
 import com.project.hireup.entity.Like;
@@ -47,21 +49,21 @@ public class LikeService {
   public void addLike(Long postId, Long userId) {
     // 게시글 존재 여부 확인
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_FOUND_POST));
+        .orElseThrow(() -> new HireUpException(NOT_FOUND_POST));
 
     // 사용자 존재 여부 확인
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_ACCOUNT));
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
     // 게시글 상태가 PRIVATE인 경우 좋아요 불가
-    if (post.getStatus() == PostStatus.PRIVATE) {
-      throw new HireUpException(ErrorCode.PRIVATE_POST);
+    if (post.getStatus() == PRIVATE) {
+      throw new HireUpException(PRIVATE_POST);
     }
 
     // 게시글 상태가 FOLLOWER인 경우 팔로워인지 확인
-    if (post.getStatus() == PostStatus.FOLLOWER) {
+    if (post.getStatus() == FOLLOWER) {
       if (!followRepository.existsByFollowerAndFollowing(user, post.getUser())) {
-        throw new HireUpException(ErrorCode.NOT_FOLLOWER);
+        throw new HireUpException(NOT_FOLLOWER);
       }
     }
 
@@ -70,7 +72,7 @@ public class LikeService {
     Boolean hasLiked = redisTemplate.opsForSet().isMember(userLikedKey, postId.toString());
 
     if (Boolean.TRUE.equals(hasLiked) || likeRepository.existsByUserAndPost(user, post)) {
-      throw new HireUpException(ErrorCode.ALREADY_LIKED);
+      throw new HireUpException(ALREADY_LIKED);
     }
 
     // DB에 좋아요 저장
@@ -91,7 +93,8 @@ public class LikeService {
     String email = post.getUser().getEmail();
     String subject = "게시글에 새로운 좋아요가 추가되었습니다!";
     String text = "<p>안녕하세요, " + post.getUser().getName() + "님.</p>"
-        + "<p>회원 <strong>" + user.getName() + "</strong>님이 귀하의 게시글 <strong>\"" + post.getTitle() + "\"</strong>에 좋아요를 눌렀습니다.</p>"
+        + "<p>회원 <strong>" + user.getName() + "</strong>님이 귀하의 게시글 <strong>\"" + post.getTitle()
+        + "\"</strong>에 좋아요를 눌렀습니다.</p>"
         + "<p>감사합니다.</p>";
 
     mailComponent.sendMail(email, subject, text);
@@ -107,15 +110,15 @@ public class LikeService {
   public void removeLike(Long postId, Long userId) {
     // 게시글 존재 여부 확인
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_FOUND_POST));
+        .orElseThrow(() -> new HireUpException(NOT_FOUND_POST));
 
     // 사용자 존재 여부 확인
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_ACCOUNT));
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
     // 좋아요 정보 확인
     Like like = likeRepository.findByUserAndPost(user, post)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_EXIST_LIKE));
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_LIKE));
 
     // DB에서 좋아요 정보 삭제
     likeRepository.delete(like);
@@ -141,7 +144,7 @@ public class LikeService {
   public Long getLikeCount(Long postId) {
     // 게시글 존재 여부 확인
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new HireUpException(ErrorCode.NOT_FOUND_POST));
+        .orElseThrow(() -> new HireUpException(NOT_FOUND_POST));
 
     // Redis에서 좋아요 수 조회 (없으면 DB 조회 후 Redis 갱신)
     String countKey = LIKE_COUNT_KEY + postId;

@@ -38,7 +38,7 @@ public class Report {
   @JoinColumn(name = "post_id", nullable = false)
   private Post post; // 신고된 게시글
 
-  @Column(length = 500,nullable = false)
+  @Column(length = 500, nullable = false)
   private String reason; // 신고 사유
 
   @CreatedDate

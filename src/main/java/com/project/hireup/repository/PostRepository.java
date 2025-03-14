@@ -31,7 +31,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
       " (SELECT f.following FROM Follow f WHERE f.follower = :user))")
   Page<Post> findAllVisiblePosts(@Param("user") User user, Pageable pageable);
 
-
   @Query("SELECT p.id FROM Post p")
   List<Long> findAllPostIds();
 
