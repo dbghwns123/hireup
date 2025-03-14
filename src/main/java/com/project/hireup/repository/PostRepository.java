@@ -3,6 +3,7 @@ package com.project.hireup.repository;
 import com.project.hireup.entity.Category;
 import com.project.hireup.entity.Post;
 import com.project.hireup.entity.User;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,5 +30,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
       "(p.status = 'FOLLOWER' AND p.user IN " +
       " (SELECT f.following FROM Follow f WHERE f.follower = :user))")
   Page<Post> findAllVisiblePosts(@Param("user") User user, Pageable pageable);
+
+
+  @Query("SELECT p.id FROM Post p")
+  List<Long> findAllPostIds();
 
 }

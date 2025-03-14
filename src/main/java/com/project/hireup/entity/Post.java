@@ -63,6 +63,10 @@ public class Post {
   @Column(nullable = false)
   private int viewCount = 0;
 
+  // 좋아요 수 캐싱 필드 추가
+  @Column(nullable = false)
+  private int likeCount = 0;
+
   @CreatedDate
   @Column(updatable = false)
   private LocalDateTime createdAt;
@@ -92,6 +96,23 @@ public class Post {
 
   public void increaseViewCount() {
     this.viewCount++;
+  }
+
+  // 좋아요 수 증가
+  public void increaseLikeCount() {
+    this.likeCount++;
+  }
+
+  // 좋아요 수 감소
+  public void decreaseLikeCount() {
+    if (this.likeCount > 0) {
+      this.likeCount--;
+    }
+  }
+
+  // 좋아요 수 설정 (Redis와 동기화 시 사용)
+  public void setLikeCount(int count) {
+    this.likeCount = Math.max(0, count);
   }
 
   // 게시글 수정 메서드
