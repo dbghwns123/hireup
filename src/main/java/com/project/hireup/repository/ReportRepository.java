@@ -10,4 +10,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
 
   List<Report> findAllByReporterId(Long userId);
+
+  List<Report> findAllByPostId(Long postId);
 }

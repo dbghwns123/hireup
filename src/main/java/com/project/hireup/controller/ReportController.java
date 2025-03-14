@@ -39,11 +39,15 @@ public class ReportController {
   public ResponseEntity<List<ReportResponseDto>> getMyReports(
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-    List<ReportResponseDto> reports = reportService.getMyReports(userDetails.getId());
-    return ResponseEntity.ok(reports);
+    return ResponseEntity.ok(reportService.getMyReports(userDetails.getId()));
   }
 
+  @Operation(summary = "나의 특정 게시글 신고 내역 조회", description = "나의 특정 게시글의 신고 내역을 조회합니다.")
+  @GetMapping("/post/{postId}")
+  public ResponseEntity<List<ReportResponseDto>> getReportsByPost(@PathVariable Long postId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-
+    return ResponseEntity.ok(reportService.getReportsByPost(postId, userDetails.getId()));
+  }
 
 }
