@@ -4,6 +4,7 @@ import static com.project.hireup.type.ErrorCode.*;
 import static com.project.hireup.type.PostStatus.*;
 
 import com.project.hireup.dto.ReportRequestDto;
+import com.project.hireup.dto.ReportResponseDto;
 import com.project.hireup.entity.Post;
 import com.project.hireup.entity.Report;
 import com.project.hireup.entity.User;
@@ -14,6 +15,8 @@ import com.project.hireup.repository.UserRepository;
 import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.PostStatus;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,5 +51,17 @@ public class ReportService {
       post.setStatus(PRIVATE);
       postRepository.save(post);
     }
+  }
+
+  // 나의 신고 내역 조회
+  public List<ReportResponseDto> getMyReports(Long userId) {
+
+    // 유저 검증
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    return reportRepository.findAllByReporterId(userId).stream()
+        .map(ReportResponseDto::fromEntity)
+        .collect(Collectors.toList());
   }
 }
