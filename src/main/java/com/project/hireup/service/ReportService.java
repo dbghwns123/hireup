@@ -2,6 +2,7 @@ package com.project.hireup.service;
 
 import static com.project.hireup.type.ErrorCode.*;
 import static com.project.hireup.type.PostStatus.*;
+import static com.project.hireup.type.UserRole.*;
 
 import com.project.hireup.dto.ReportRequestDto;
 import com.project.hireup.dto.ReportResponseDto;
@@ -14,6 +15,7 @@ import com.project.hireup.repository.ReportRepository;
 import com.project.hireup.repository.UserRepository;
 import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.PostStatus;
+import com.project.hireup.type.UserRole;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Objects;
@@ -85,5 +87,24 @@ public class ReportService {
     return reportRepository.findAllByPostId(postId).stream()
         .map(ReportResponseDto::fromEntity)
         .collect(Collectors.toList());
+  }
+
+  // 신고 삭제(관리자)
+  @Transactional
+  public void deleteReport(Long reportId, Long userId) {
+
+    // 유저 검증
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
+
+    if (user.getUserRole() != ROLE_ADMIN) {
+      throw new HireUpException(NO_PERMISSION);
+    }
+
+    // 신고 내역 검증
+    Report report = reportRepository.findById(reportId)
+        .orElseThrow(() -> new HireUpException(NOT_EXIST_REPORT));
+
+    reportRepository.delete(report);
   }
 }
