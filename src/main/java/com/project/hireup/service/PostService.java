@@ -168,6 +168,10 @@ public class PostService {
       throw new HireUpException(CAN_NOT_UPDATE_POST);
     }
 
+    // 게시글 삭제 (DB에서 삭제)
     postRepository.delete(post);
+
+    // Elasticsearch에서도 삭제
+    postSearchService.deletePost(postId);
   }
 }

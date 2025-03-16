@@ -19,4 +19,10 @@ public class PostSearchService {
     postSearchRepository.save(PostDocument.fromEntity(post));
   }
 
+  // 게시글 삭제 (Elasticsearch에서도 삭제)
+  @Transactional
+  public void deletePost(Long postId) {
+    postSearchRepository.deleteById(postId);
+  }
+
 }
