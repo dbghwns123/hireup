@@ -7,7 +7,10 @@ import static com.project.hireup.type.ErrorCode.NOT_EXIST_COMMENT;
 import static com.project.hireup.type.ErrorCode.NOT_FOLLOWER;
 import static com.project.hireup.type.ErrorCode.NOT_FOUND_POST;
 import static com.project.hireup.type.ErrorCode.PRIVATE_POST;
+import static com.project.hireup.type.NotificationType.COMMENT;
+import static com.project.hireup.type.PostStatus.*;
 
+import com.project.hireup.component.MailComponent;
 import com.project.hireup.dto.CommentRequestDto;
 import com.project.hireup.dto.CommentResponseDto;
 import com.project.hireup.entity.Comment;
@@ -36,6 +39,8 @@ public class CommentService {
   private final PostRepository postRepository;
   private final UserRepository userRepository;
   private final FollowRepository followRepository;
+  private final MailComponent mailComponent;
+  private final NotificationService notificationService;
 
   // 댓글 작성
   @Transactional
@@ -50,12 +55,12 @@ public class CommentService {
         .orElseThrow(() -> new HireUpException(NOT_EXIST_ACCOUNT));
 
     // 게시글 상태 확인 (PRIVATE 이면 댓글 작성 불가)
-    if (post.getStatus() == PostStatus.PRIVATE) {
+    if (post.getStatus() == PRIVATE) {
       throw new HireUpException(PRIVATE_POST);
     }
 
     // 게시글의 상태가 Follower 일 때, 현재 유저가 작성자를 팔로우하고 있는지 확인
-    if (post.getStatus() == PostStatus.FOLLOWER &&
+    if (post.getStatus() == FOLLOWER &&
         !followRepository.existsByFollowerAndFollowing(user, post.getUser())) {
 
       throw new HireUpException(NOT_FOLLOWER);
@@ -66,6 +71,21 @@ public class CommentService {
         .user(user)
         .post(post)
         .build());
+
+    // 게시글 작성자에게 메일 전송
+    String email = post.getUser().getEmail();
+    String subject = "새로운 댓글이 달렸습니다!";
+    String text = "<p>안녕하세요, " + post.getUser().getName() + "님.</p>"
+        + "<p>회원 <strong>" + user.getName() + "</strong>님이 귀하의 게시글 <strong>\"" + post.getTitle()
+        + "\"</strong>에 댓글을 작성했습니다.</p>"
+        + "<p>댓글 내용:</p>"
+        + "<blockquote>" + requestDto.getContent() + "</blockquote>"
+        + "<p>감사합니다.</p>";
+
+    mailComponent.sendMail(email, subject, text);
+
+    // 게시글 작성자에게 알림 저장
+    notificationService.createNotification(post.getUser(), COMMENT);
   }
 
   // 댓글 목록 조회

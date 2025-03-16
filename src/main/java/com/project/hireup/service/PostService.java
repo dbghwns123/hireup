@@ -1,11 +1,11 @@
 package com.project.hireup.service;
 
-import static com.project.hireup.type.ErrorCode.*;
 import static com.project.hireup.type.ErrorCode.CAN_NOT_READ_POST;
 import static com.project.hireup.type.ErrorCode.CAN_NOT_UPDATE_POST;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_ACCOUNT;
 import static com.project.hireup.type.ErrorCode.NOT_EXIST_POST;
 import static com.project.hireup.type.ErrorCode.NOT_FOUND_POST;
+import static com.project.hireup.type.ErrorCode.NO_PERMISSION_CATEGORY;
 
 import com.project.hireup.dto.PostRequestDto;
 import com.project.hireup.dto.PostResponseDto;
@@ -16,7 +16,6 @@ import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.FollowRepository;
 import com.project.hireup.repository.PostRepository;
 import com.project.hireup.repository.UserRepository;
-import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.PostStatus;
 import jakarta.validation.Valid;
 import java.util.Objects;

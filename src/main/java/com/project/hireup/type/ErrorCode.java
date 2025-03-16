@@ -35,6 +35,7 @@ public enum ErrorCode {
   NOT_EXIST_POST(HttpStatus.BAD_REQUEST, "해당 게시글은 존재하지 않습니다."),
   NOT_EXIST_COMMENT(HttpStatus.BAD_REQUEST, "해당 댓글은 존재하지 않습니다."),
   NOT_EXIST_LIKE(HttpStatus.BAD_REQUEST, "해당 좋아요는 존재하지 않습니다."),
+  NOT_EXIST_REPORT(HttpStatus.BAD_REQUEST, "해당 신고 내역이 존재하지 않습니다."),
   NOT_EXIST_EMAIL_AUTH_KEY(HttpStatus.BAD_REQUEST, "해당 이메일 인증 키는 존재하지 않습니다."),
   ALREADY_AUTH(HttpStatus.BAD_REQUEST, "이미 이메일 인증을 완료했습니다."),
   ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "이미 팔로우한 사용자입니다."),
@@ -42,6 +43,8 @@ public enum ErrorCode {
   ALREADY_LIKED(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다."),
   NOT_EXIST_NAME(HttpStatus.BAD_REQUEST, "해당 이름을 가진 계정이 없습니다."),
   NO_PERMISSION_CATEGORY(HttpStatus.BAD_REQUEST, "해당 카테고리에 대한 권한이 없습니다."),
+  NO_PERMISSION_POST(HttpStatus.BAD_REQUEST, "해당 게시글에 대한 권한이 없습니다."),
+  NO_PERMISSION(HttpStatus.BAD_REQUEST, "권한이 없습니다."),
 
 
   // 403 FORBIDDEN (접근 금지)

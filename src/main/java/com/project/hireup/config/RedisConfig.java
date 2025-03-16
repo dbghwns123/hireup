@@ -54,15 +54,19 @@ public class RedisConfig {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-    objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
+    objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,
+        ObjectMapper.DefaultTyping.NON_FINAL);
 
-    Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+    Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper,
+        Object.class);
 
     RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
         .entryTtl(Duration.ofHours(1))
         .disableCachingNullValues()
-        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
+        .serializeKeysWith(
+            RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+        .serializeValuesWith(
+            RedisSerializationContext.SerializationPair.fromSerializer(serializer));
 
     return RedisCacheManager.builder(connectionFactory)
         .cacheDefaults(cacheConfig)

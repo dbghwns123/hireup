@@ -1,6 +1,5 @@
 package com.project.hireup.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.hireup.converter.StringSetConverter;
 import com.project.hireup.dto.PostRequestDto;
 import com.project.hireup.type.PostStatus;
