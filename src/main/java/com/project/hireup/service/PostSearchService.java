@@ -3,6 +3,7 @@ package com.project.hireup.service;
 import com.project.hireup.entity.Post;
 import com.project.hireup.entity.PostDocument;
 import com.project.hireup.repository.PostSearchRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,11 @@ public class PostSearchService {
   @Transactional
   public void deletePost(Long postId) {
     postSearchRepository.deleteById(postId);
+  }
+
+  // 게시글 검색 (정확히 일치하는 제목)
+  public List<PostDocument> searchByTitle(String title) {
+    return postSearchRepository.findByTitle(title);
   }
 
 }
