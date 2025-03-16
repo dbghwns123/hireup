@@ -25,4 +25,11 @@ public class PostSearchController {
     return ResponseEntity.ok(posts);
   }
 
+  @Operation(summary = "해시태그로 게시글 검색", description = "해시태그를 통해 게시글을 검색합니다.")
+  @GetMapping("/hashtag")
+  public ResponseEntity<List<PostDocument>> searchByHashtag(@RequestParam String hashtag) {
+    List<PostDocument> posts = postSearchService.searchByHashtag(hashtag);
+    return ResponseEntity.ok(posts);
+  }
+
 }

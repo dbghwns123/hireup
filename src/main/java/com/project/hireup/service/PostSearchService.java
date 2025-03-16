@@ -31,4 +31,9 @@ public class PostSearchService {
     return postSearchRepository.findByTitle(title);
   }
 
+  // 게시글 검색 (정확히 일치하는 해시태그)
+  public List<PostDocument> searchByHashtag(String hashtag) {
+    return postSearchRepository.findByHashtags(hashtag);
+  }
+
 }
