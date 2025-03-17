@@ -33,6 +33,7 @@ public class PostService {
   private final PostRepository postRepository;
   private final CategoryService categoryService;
   private final FollowRepository followRepository;
+  private final PostSearchService postSearchService;
 
   // 게시글 생성
   @Transactional
@@ -50,7 +51,7 @@ public class PostService {
       throw new HireUpException(NO_PERMISSION_CATEGORY);
     }
 
-    postRepository.save(Post.builder()
+    Post post = postRepository.save(Post.builder()
         .title(requestDto.getTitle())
         .content(requestDto.getContent())
         .category(category)
@@ -58,6 +59,9 @@ public class PostService {
         .status(requestDto.getStatus())
         .user(user)
         .build());
+
+    // Elasticsearch 에 저장
+    postSearchService.savePost(post);
   }
 
   // 특정 게시글 조회
@@ -146,6 +150,9 @@ public class PostService {
 
     // 변경 사항 저장
     postRepository.save(post);
+
+    // Elasticsearch 에 업데이트
+    postSearchService.savePost(post);
   }
 
   // 게시글 삭제
@@ -161,6 +168,10 @@ public class PostService {
       throw new HireUpException(CAN_NOT_UPDATE_POST);
     }
 
+    // 게시글 삭제 (DB에서 삭제)
     postRepository.delete(post);
+
+    // Elasticsearch에서도 삭제
+    postSearchService.deletePost(postId);
   }
 }

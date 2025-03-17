@@ -42,6 +42,9 @@ spring:
     cache:
       type: redis      # 캐시 저장소를 Redis로 설정
 
+  elasticsearch:
+    uris: http://localhost:9200
+
   admin:
     token: ${ADMIN_TOKEN}
 
