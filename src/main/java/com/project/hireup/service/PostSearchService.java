@@ -3,8 +3,9 @@ package com.project.hireup.service;
 import com.project.hireup.entity.Post;
 import com.project.hireup.entity.PostDocument;
 import com.project.hireup.repository.PostSearchRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,14 +27,14 @@ public class PostSearchService {
     postSearchRepository.deleteById(postId);
   }
 
-  // 게시글 검색 (정확히 일치하는 제목)
-  public List<PostDocument> searchByTitle(String title) {
-    return postSearchRepository.findByTitle(title);
+  // 게시글 검색 (정확히 일치하는 제목, 페이징 처리)
+  public Page<PostDocument> searchByTitle(String title, Pageable pageable) {
+    return postSearchRepository.findByTitle(title, pageable);
   }
 
-  // 게시글 검색 (정확히 일치하는 해시태그)
-  public List<PostDocument> searchByHashtag(String hashtag) {
-    return postSearchRepository.findByHashtags(hashtag);
+  // 게시글 검색 (정확히 일치하는 해시태그, 페이징 처리)
+  public Page<PostDocument> searchByHashtag(String hashtag, Pageable pageable) {
+    return postSearchRepository.findByHashtags(hashtag, pageable);
   }
 
 }
