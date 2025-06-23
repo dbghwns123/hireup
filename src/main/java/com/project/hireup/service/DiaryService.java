@@ -1,5 +1,7 @@
 package com.project.hireup.service;
 
+import static com.project.hireup.type.ErrorCode.*;
+
 import com.project.hireup.client.OpenWeatherClient;
 import com.project.hireup.dto.DiaryRequestDto;
 import com.project.hireup.entity.Diary;
@@ -8,6 +10,7 @@ import com.project.hireup.entity.Weather;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.DiaryRepository;
 import com.project.hireup.repository.UserRepository;
+import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +29,7 @@ public class DiaryService {
 
     // 1. 유저 조회
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new HireUpException(ErrorCode.USER_NOT_FOUND));
+        .orElseThrow(() -> new HireUpException(USER_NOT_FOUND));
 
     // 2. 일반 사용자만 작성 가능
     if (user.getUserRole() != UserRole.ROLE_USER) {
