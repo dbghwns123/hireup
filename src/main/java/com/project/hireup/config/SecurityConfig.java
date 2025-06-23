@@ -34,6 +34,8 @@ public class SecurityConfig {
             .requestMatchers("/api/auth/**").permitAll() // 인증 없이 접근 가능한 경로(모든 사용자 접근 허용)
             .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
             .permitAll() // Swagger 관련 경로 허용
+            .requestMatchers("/api/diaries/**")
+            .hasAuthority("ROLE_USER")
             .requestMatchers("/api/admin/**", "/api/category/**")
             .hasAuthority("ROLE_ADMIN") // Admin만 접근 가능
             .requestMatchers(HttpMethod.GET, "/api/category/**")
