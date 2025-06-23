@@ -6,6 +6,7 @@ import com.project.hireup.entity.Diary;
 import com.project.hireup.entity.User;
 import com.project.hireup.entity.Weather;
 import com.project.hireup.exception.HireUpException;
+import com.project.hireup.repository.DiaryRepository;
 import com.project.hireup.repository.UserRepository;
 import com.project.hireup.type.UserRole;
 import java.time.LocalDate;
