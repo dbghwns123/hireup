@@ -21,6 +21,7 @@ public class DiaryController {
   @PostMapping
   public ResponseEntity<Void> createDiary(@AuthenticationPrincipal UserDetailsImpl userDetails,
       @RequestBody DiaryRequestDto diaryRequestDto) {
-    return ResponseEntity.ok(diaryService.createDiary(userDetails.getId(), diaryRequestDto));
+    diaryService.createDiary(userDetails.getId(), diaryRequestDto);
+    return ResponseEntity.ok().build();
   }
 }
