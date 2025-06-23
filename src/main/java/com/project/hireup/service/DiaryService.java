@@ -33,12 +33,12 @@ public class DiaryService {
 
     // 2. 일반 사용자만 작성 가능
     if (user.getUserRole() != UserRole.ROLE_USER) {
-      throw new HireUpException(ErrorCode.DIARY_NOT_ALLOWED);
+      throw new HireUpException(DIARY_NOT_ALLOWED);
     }
 
     // 3. 중복 작성 방지
     if (diaryRepository.existsByUserAndDate(user, today)) {
-      throw new HireUpException(ErrorCode.DIARY_ALREADY_EXISTS);
+      throw new HireUpException(DIARY_ALREADY_EXISTS);
     }
 
     // 4. 날씨 조회
