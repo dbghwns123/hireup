@@ -45,7 +45,7 @@ public class DiaryService {
     }
 
     // 4. 날씨 조회
-    Weather weather = openWeatherClient.getCurrentWeather("Seoul");
+    Weather weather = openWeatherClient.getCurrentWeather(request.getLocation());
 
     // 5. 저장
     diaryRepository.save(Diary.builder()
