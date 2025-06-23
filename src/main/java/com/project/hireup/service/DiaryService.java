@@ -1,6 +1,8 @@
 package com.project.hireup.service;
 
-import static com.project.hireup.type.ErrorCode.*;
+import static com.project.hireup.type.ErrorCode.DIARY_ALREADY_EXISTS;
+import static com.project.hireup.type.ErrorCode.DIARY_NOT_ALLOWED;
+import static com.project.hireup.type.ErrorCode.USER_NOT_FOUND;
 
 import com.project.hireup.client.OpenWeatherClient;
 import com.project.hireup.dto.DiaryRequestDto;
@@ -10,11 +12,11 @@ import com.project.hireup.entity.Weather;
 import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.DiaryRepository;
 import com.project.hireup.repository.UserRepository;
-import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class DiaryService {
   private final OpenWeatherClient openWeatherClient;
   private final UserRepository userRepository;
 
+  @Transactional
   public void createDiary(Long userId, DiaryRequestDto request) {
     LocalDate today = LocalDate.now();
 
