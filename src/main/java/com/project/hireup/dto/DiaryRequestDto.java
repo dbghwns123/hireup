@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DiaryRequestDto {
 
-  private String Content;
+  private String content;
+  private String location; // 사용자가 입력한 지역명 (예: "Seoul", "Busan")
 }
