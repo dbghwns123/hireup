@@ -133,4 +133,21 @@ class DiaryServiceTest {
 
     assertEquals(ErrorCode.DIARY_NOT_ALLOWED, exception.getErrorCode());
   }
+
+  @Test
+  void 실패_이미_작성한_경우() {
+    // given
+    LocalDate today = LocalDate.now();
+    DiaryRequestDto requestDto = new DiaryRequestDto("중복 작성", "Seoul");
+
+    // mocking
+    Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+    Mockito.when(diaryRepository.existsByUserAndDate(testUser, today)).thenReturn(true);
+
+    // when & then
+    HireUpException exception = assertThrows(HireUpException.class,
+        () -> diaryService.createDiary(1L, requestDto));
+
+    assertEquals(ErrorCode.DIARY_ALREADY_EXISTS, exception.getErrorCode());
+  }
 }
