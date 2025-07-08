@@ -1,6 +1,7 @@
 package com.project.hireup.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
 import com.project.hireup.client.OpenWeatherClient;
@@ -8,8 +9,10 @@ import com.project.hireup.dto.DiaryRequestDto;
 import com.project.hireup.entity.Diary;
 import com.project.hireup.entity.User;
 import com.project.hireup.entity.Weather;
+import com.project.hireup.exception.HireUpException;
 import com.project.hireup.repository.DiaryRepository;
 import com.project.hireup.repository.UserRepository;
+import com.project.hireup.type.ErrorCode;
 import com.project.hireup.type.UserRole;
 import com.project.hireup.type.UserStatus;
 import java.time.LocalDate;
@@ -88,5 +91,20 @@ class DiaryServiceTest {
     assertEquals(testUser, savedDiary.getUser());
     assertEquals(weather.getDescription(), savedDiary.getWeather().getDescription());
     assertEquals(weather.getTemperature(), savedDiary.getWeather().getTemperature());
+  }
+
+  @Test
+  void 실패_존재하지_않는_사용자() {
+    // given
+    DiaryRequestDto requestDto = new DiaryRequestDto("내용", "Seoul");
+
+    // mocking
+    Mockito.when(userRepository.findById(999L)).thenReturn(Optional.empty());
+
+    // when & then
+    HireUpException exception = assertThrows(HireUpException.class,
+        () -> diaryService.createDiary(999L, requestDto));
+
+    assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
   }
 }
