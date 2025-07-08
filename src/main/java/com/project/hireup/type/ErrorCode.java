@@ -45,6 +45,9 @@ public enum ErrorCode {
   NO_PERMISSION_CATEGORY(HttpStatus.BAD_REQUEST, "해당 카테고리에 대한 권한이 없습니다."),
   NO_PERMISSION_POST(HttpStatus.BAD_REQUEST, "해당 게시글에 대한 권한이 없습니다."),
   NO_PERMISSION(HttpStatus.BAD_REQUEST, "권한이 없습니다."),
+  USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."),
+  DIARY_NOT_ALLOWED(HttpStatus.FORBIDDEN, "일기 작성은 일반 사용자만 가능합니다."),
+  DIARY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "오늘은 이미 일기를 작성했습니다."),
 
 
   // 403 FORBIDDEN (접근 금지)
