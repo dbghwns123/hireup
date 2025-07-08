@@ -107,4 +107,30 @@ class DiaryServiceTest {
 
     assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
   }
+
+  @Test
+  void 실패_일반_사용자가_아닌_경우() {
+    // given
+    User admin = User.builder()
+        .id(2L)
+        .email("admin@example.com")
+        .name("관리자")
+        .password("pw")
+        .userRole(UserRole.ROLE_ADMIN)
+        .emailAuthKey("key")
+        .emailAuthYn(true)
+        .status(UserStatus.ACTIVE)
+        .build();
+
+    DiaryRequestDto requestDto = new DiaryRequestDto("관리자 내용", "Seoul");
+
+    // mocking
+    Mockito.when(userRepository.findById(2L)).thenReturn(Optional.of(admin));
+
+    // when & then
+    HireUpException exception = assertThrows(HireUpException.class,
+        () -> diaryService.createDiary(2L, requestDto));
+
+    assertEquals(ErrorCode.DIARY_NOT_ALLOWED, exception.getErrorCode());
+  }
 }
